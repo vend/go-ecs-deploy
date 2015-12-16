@@ -1,4 +1,4 @@
-# go-ecs-deploy
+# go-ecs-deploy [![Build Status](https://travis-ci.org/vend/go-ecs-deploy.svg)](https://travis-ci.org/vend/go-ecs-deploy)
 deploy a hosted docker container to an existing ecs cluster
 
 Allows deployment of ECS microservices straight from the command line!
