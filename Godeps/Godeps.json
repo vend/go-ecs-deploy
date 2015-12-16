@@ -26,7 +26,17 @@
 			"Rev": "999b1591218c36d5050d1ba7266eba956e65965f"
 		},
 		{
+			"ImportPath": "github.com/aws/aws-sdk-go/private/protocol/query",
+			"Comment": "v1.0.4",
+			"Rev": "999b1591218c36d5050d1ba7266eba956e65965f"
+		},
+		{
 			"ImportPath": "github.com/aws/aws-sdk-go/private/protocol/rest",
+			"Comment": "v1.0.4",
+			"Rev": "999b1591218c36d5050d1ba7266eba956e65965f"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil",
 			"Comment": "v1.0.4",
 			"Rev": "999b1591218c36d5050d1ba7266eba956e65965f"
 		},
@@ -42,6 +52,11 @@
 		},
 		{
 			"ImportPath": "github.com/aws/aws-sdk-go/service/ecs",
+			"Comment": "v1.0.4",
+			"Rev": "999b1591218c36d5050d1ba7266eba956e65965f"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/sts",
 			"Comment": "v1.0.4",
 			"Rev": "999b1591218c36d5050d1ba7266eba956e65965f"
 		},
