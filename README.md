@@ -5,7 +5,7 @@ Allows deployment of ECS microservices straight from the command line!
 
 ## Installation
 
-    $ go install github.com/go-ecs-deploy
+    $ go get github.com/vend/go-ecs-deploy
 
 ## Usage
 
