@@ -87,7 +87,7 @@ func main() {
 
 	newArn := registerRes.TaskDefinition.TaskDefinitionArn
 
-	fmt.Printf("Registered new taks for %s:%s \n", *sha, *newArn)
+	fmt.Printf("Registered new task for %s:%s \n", *sha, *newArn)
 
 	// update service to use new definition
 	_, err = svc.UpdateService(
