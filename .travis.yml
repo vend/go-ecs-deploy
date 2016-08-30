@@ -2,3 +2,11 @@ language: go
 go: 1.7
 
 install: true
+
+before_install:
+    - go get -v github.com/Masterminds/glide
+
+script:
+  - go test $(glide nv)
+  - CGO_ENABLED=0 GOOS="linux" go build
+
