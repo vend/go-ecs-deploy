@@ -1,12 +1,13 @@
 {
+  "version":"2.0",
   "metadata":{
     "apiVersion":"2012-10-25",
     "endpointPrefix":"directconnect",
     "jsonVersion":"1.1",
+    "protocol":"json",
     "serviceFullName":"AWS Direct Connect",
     "signatureVersion":"v4",
-    "targetPrefix":"OvertureService",
-    "protocol":"json"
+    "targetPrefix":"OvertureService"
   },
   "operations":{
     "AllocateConnectionOnInterconnect":{
@@ -18,14 +19,8 @@
       "input":{"shape":"AllocateConnectionOnInterconnectRequest"},
       "output":{"shape":"Connection"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "AllocatePrivateVirtualInterface":{
@@ -37,14 +32,8 @@
       "input":{"shape":"AllocatePrivateVirtualInterfaceRequest"},
       "output":{"shape":"VirtualInterface"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "AllocatePublicVirtualInterface":{
@@ -56,14 +45,8 @@
       "input":{"shape":"AllocatePublicVirtualInterfaceRequest"},
       "output":{"shape":"VirtualInterface"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "ConfirmConnection":{
@@ -75,14 +58,8 @@
       "input":{"shape":"ConfirmConnectionRequest"},
       "output":{"shape":"ConfirmConnectionResponse"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "ConfirmPrivateVirtualInterface":{
@@ -94,14 +71,8 @@
       "input":{"shape":"ConfirmPrivateVirtualInterfaceRequest"},
       "output":{"shape":"ConfirmPrivateVirtualInterfaceResponse"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "ConfirmPublicVirtualInterface":{
@@ -113,14 +84,8 @@
       "input":{"shape":"ConfirmPublicVirtualInterfaceRequest"},
       "output":{"shape":"ConfirmPublicVirtualInterfaceResponse"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "CreateConnection":{
@@ -132,14 +97,8 @@
       "input":{"shape":"CreateConnectionRequest"},
       "output":{"shape":"Connection"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "CreateInterconnect":{
@@ -151,14 +110,8 @@
       "input":{"shape":"CreateInterconnectRequest"},
       "output":{"shape":"Interconnect"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "CreatePrivateVirtualInterface":{
@@ -170,14 +123,8 @@
       "input":{"shape":"CreatePrivateVirtualInterfaceRequest"},
       "output":{"shape":"VirtualInterface"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "CreatePublicVirtualInterface":{
@@ -189,14 +136,8 @@
       "input":{"shape":"CreatePublicVirtualInterfaceRequest"},
       "output":{"shape":"VirtualInterface"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DeleteConnection":{
@@ -208,14 +149,8 @@
       "input":{"shape":"DeleteConnectionRequest"},
       "output":{"shape":"Connection"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DeleteInterconnect":{
@@ -227,14 +162,8 @@
       "input":{"shape":"DeleteInterconnectRequest"},
       "output":{"shape":"DeleteInterconnectResponse"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DeleteVirtualInterface":{
@@ -246,14 +175,21 @@
       "input":{"shape":"DeleteVirtualInterfaceRequest"},
       "output":{"shape":"DeleteVirtualInterfaceResponse"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
+      ]
+    },
+    "DescribeConnectionLoa":{
+      "name":"DescribeConnectionLoa",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"DescribeConnectionLoaRequest"},
+      "output":{"shape":"DescribeConnectionLoaResponse"},
+      "errors":[
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DescribeConnections":{
@@ -265,14 +201,8 @@
       "input":{"shape":"DescribeConnectionsRequest"},
       "output":{"shape":"Connections"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DescribeConnectionsOnInterconnect":{
@@ -284,14 +214,21 @@
       "input":{"shape":"DescribeConnectionsOnInterconnectRequest"},
       "output":{"shape":"Connections"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
+      ]
+    },
+    "DescribeInterconnectLoa":{
+      "name":"DescribeInterconnectLoa",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"DescribeInterconnectLoaRequest"},
+      "output":{"shape":"DescribeInterconnectLoaResponse"},
+      "errors":[
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DescribeInterconnects":{
@@ -303,14 +240,8 @@
       "input":{"shape":"DescribeInterconnectsRequest"},
       "output":{"shape":"Interconnects"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DescribeLocations":{
@@ -321,14 +252,8 @@
       },
       "output":{"shape":"Locations"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DescribeVirtualGateways":{
@@ -339,14 +264,8 @@
       },
       "output":{"shape":"VirtualGateways"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     },
     "DescribeVirtualInterfaces":{
@@ -358,14 +277,8 @@
       "input":{"shape":"DescribeVirtualInterfacesRequest"},
       "output":{"shape":"VirtualInterfaces"},
       "errors":[
-        {
-          "shape":"DirectConnectServerException",
-          "exception":true
-        },
-        {
-          "shape":"DirectConnectClientException",
-          "exception":true
-        }
+        {"shape":"DirectConnectServerException"},
+        {"shape":"DirectConnectClientException"}
       ]
     }
   },
@@ -472,7 +385,8 @@
         "location":{"shape":"LocationCode"},
         "bandwidth":{"shape":"Bandwidth"},
         "vlan":{"shape":"VLAN"},
-        "partnerName":{"shape":"PartnerName"}
+        "partnerName":{"shape":"PartnerName"},
+        "loaIssueTime":{"shape":"LoaIssueTime"}
       }
     },
     "ConnectionId":{"type":"string"},
@@ -582,6 +496,21 @@
         "virtualInterfaceState":{"shape":"VirtualInterfaceState"}
       }
     },
+    "DescribeConnectionLoaRequest":{
+      "type":"structure",
+      "required":["connectionId"],
+      "members":{
+        "connectionId":{"shape":"ConnectionId"},
+        "providerName":{"shape":"ProviderName"},
+        "loaContentType":{"shape":"LoaContentType"}
+      }
+    },
+    "DescribeConnectionLoaResponse":{
+      "type":"structure",
+      "members":{
+        "loa":{"shape":"Loa"}
+      }
+    },
     "DescribeConnectionsOnInterconnectRequest":{
       "type":"structure",
       "required":["interconnectId"],
@@ -593,6 +522,21 @@
       "type":"structure",
       "members":{
         "connectionId":{"shape":"ConnectionId"}
+      }
+    },
+    "DescribeInterconnectLoaRequest":{
+      "type":"structure",
+      "required":["interconnectId"],
+      "members":{
+        "interconnectId":{"shape":"InterconnectId"},
+        "providerName":{"shape":"ProviderName"},
+        "loaContentType":{"shape":"LoaContentType"}
+      }
+    },
+    "DescribeInterconnectLoaResponse":{
+      "type":"structure",
+      "members":{
+        "loa":{"shape":"Loa"}
       }
     },
     "DescribeInterconnectsRequest":{
@@ -631,7 +575,8 @@
         "interconnectState":{"shape":"InterconnectState"},
         "region":{"shape":"Region"},
         "location":{"shape":"LocationCode"},
-        "bandwidth":{"shape":"Bandwidth"}
+        "bandwidth":{"shape":"Bandwidth"},
+        "loaIssueTime":{"shape":"LoaIssueTime"}
       }
     },
     "InterconnectId":{"type":"string"},
@@ -657,6 +602,19 @@
         "interconnects":{"shape":"InterconnectList"}
       }
     },
+    "Loa":{
+      "type":"structure",
+      "members":{
+        "loaContent":{"shape":"LoaContent"},
+        "loaContentType":{"shape":"LoaContentType"}
+      }
+    },
+    "LoaContent":{"type":"blob"},
+    "LoaContentType":{
+      "type":"string",
+      "enum":["application/pdf"]
+    },
+    "LoaIssueTime":{"type":"timestamp"},
     "Location":{
       "type":"structure",
       "members":{
@@ -752,6 +710,7 @@
     },
     "OwnerAccount":{"type":"string"},
     "PartnerName":{"type":"string"},
+    "ProviderName":{"type":"string"},
     "Region":{"type":"string"},
     "RouteFilterPrefix":{
       "type":"structure",
@@ -817,6 +776,7 @@
         "verifying",
         "pending",
         "available",
+        "down",
         "deleting",
         "deleted",
         "rejected"

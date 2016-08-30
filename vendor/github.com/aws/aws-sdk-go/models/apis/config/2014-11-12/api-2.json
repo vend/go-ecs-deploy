@@ -19,7 +19,19 @@
       },
       "input":{"shape":"DeleteConfigRuleRequest"},
       "errors":[
-        {"shape":"NoSuchConfigRuleException"}
+        {"shape":"NoSuchConfigRuleException"},
+        {"shape":"ResourceInUseException"}
+      ]
+    },
+    "DeleteConfigurationRecorder":{
+      "name":"DeleteConfigurationRecorder",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"DeleteConfigurationRecorderRequest"},
+      "errors":[
+        {"shape":"NoSuchConfigurationRecorderException"}
       ]
     },
     "DeleteDeliveryChannel":{
@@ -32,6 +44,19 @@
       "errors":[
         {"shape":"NoSuchDeliveryChannelException"},
         {"shape":"LastDeliveryChannelDeleteFailedException"}
+      ]
+    },
+    "DeleteEvaluationResults":{
+      "name":"DeleteEvaluationResults",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"DeleteEvaluationResultsRequest"},
+      "output":{"shape":"DeleteEvaluationResultsResponse"},
+      "errors":[
+        {"shape":"NoSuchConfigRuleException"},
+        {"shape":"ResourceInUseException"}
       ]
     },
     "DeliverConfigSnapshot":{
@@ -234,7 +259,9 @@
       "errors":[
         {"shape":"InvalidParameterValueException"},
         {"shape":"MaxNumberOfConfigRulesExceededException"},
-        {"shape":"ResourceInUseException"}
+        {"shape":"ResourceInUseException"},
+        {"shape":"InsufficientPermissionsException"},
+        {"shape":"NoAvailableConfigurationRecorderException"}
       ]
     },
     "PutConfigurationRecorder":{
@@ -280,6 +307,21 @@
         {"shape":"InvalidParameterValueException"},
         {"shape":"InvalidResultTokenException"},
         {"shape":"NoSuchConfigRuleException"}
+      ]
+    },
+    "StartConfigRulesEvaluation":{
+      "name":"StartConfigRulesEvaluation",
+      "http":{
+        "method":"POST",
+        "requestUri":"/"
+      },
+      "input":{"shape":"StartConfigRulesEvaluationRequest"},
+      "output":{"shape":"StartConfigRulesEvaluationResponse"},
+      "errors":[
+        {"shape":"NoSuchConfigRuleException"},
+        {"shape":"LimitExceededException"},
+        {"shape":"ResourceInUseException"},
+        {"shape":"InvalidParameterValueException"}
       ]
     },
     "StartConfigurationRecorder":{
@@ -436,9 +478,12 @@
         "ConfigRuleId":{"shape":"String"},
         "LastSuccessfulInvocationTime":{"shape":"Date"},
         "LastFailedInvocationTime":{"shape":"Date"},
+        "LastSuccessfulEvaluationTime":{"shape":"Date"},
+        "LastFailedEvaluationTime":{"shape":"Date"},
         "FirstActivatedTime":{"shape":"Date"},
         "LastErrorCode":{"shape":"String"},
-        "LastErrorMessage":{"shape":"String"}
+        "LastErrorMessage":{"shape":"String"},
+        "FirstEvaluationStarted":{"shape":"Boolean"}
       }
     },
     "ConfigRuleEvaluationStatusList":{
@@ -455,7 +500,9 @@
       "type":"string",
       "enum":[
         "ACTIVE",
-        "DELETING"
+        "DELETING",
+        "DELETING_RESULTS",
+        "EVALUATING"
       ]
     },
     "ConfigRules":{
@@ -497,7 +544,8 @@
         "tags":{"shape":"Tags"},
         "relatedEvents":{"shape":"RelatedEventList"},
         "relationships":{"shape":"RelationshipList"},
-        "configuration":{"shape":"Configuration"}
+        "configuration":{"shape":"Configuration"},
+        "supplementaryConfiguration":{"shape":"SupplementaryConfiguration"}
       }
     },
     "ConfigurationItemCaptureTime":{"type":"timestamp"},
@@ -557,11 +605,30 @@
         "ConfigRuleName":{"shape":"StringWithCharLimit64"}
       }
     },
+    "DeleteConfigurationRecorderRequest":{
+      "type":"structure",
+      "required":["ConfigurationRecorderName"],
+      "members":{
+        "ConfigurationRecorderName":{"shape":"RecorderName"}
+      }
+    },
     "DeleteDeliveryChannelRequest":{
       "type":"structure",
       "required":["DeliveryChannelName"],
       "members":{
         "DeliveryChannelName":{"shape":"ChannelName"}
+      }
+    },
+    "DeleteEvaluationResultsRequest":{
+      "type":"structure",
+      "required":["ConfigRuleName"],
+      "members":{
+        "ConfigRuleName":{"shape":"StringWithCharLimit64"}
+      }
+    },
+    "DeleteEvaluationResultsResponse":{
+      "type":"structure",
+      "members":{
       }
     },
     "DeliverConfigSnapshotRequest":{
@@ -862,7 +929,14 @@
         "nextToken":{"shape":"NextToken"}
       }
     },
+    "IncludeGlobalResourceTypes":{"type":"boolean"},
     "InsufficientDeliveryPolicyException":{
+      "type":"structure",
+      "members":{
+      },
+      "exception":true
+    },
+    "InsufficientPermissionsException":{
       "type":"structure",
       "members":{
       },
@@ -947,6 +1021,12 @@
       "max":100,
       "min":0
     },
+    "LimitExceededException":{
+      "type":"structure",
+      "members":{
+      },
+      "exception":true
+    },
     "ListDiscoveredResourcesRequest":{
       "type":"structure",
       "required":["resourceType"],
@@ -998,7 +1078,8 @@
       "type":"string",
       "enum":[
         "ConfigurationItemChangeNotification",
-        "ConfigurationSnapshotDeliveryCompleted"
+        "ConfigurationSnapshotDeliveryCompleted",
+        "ScheduledNotification"
       ]
     },
     "Name":{"type":"string"},
@@ -1105,8 +1186,15 @@
       "type":"structure",
       "members":{
         "allSupported":{"shape":"AllSupported"},
+        "includeGlobalResourceTypes":{"shape":"IncludeGlobalResourceTypes"},
         "resourceTypes":{"shape":"ResourceTypeList"}
       }
+    },
+    "ReevaluateConfigRuleNames":{
+      "type":"list",
+      "member":{"shape":"StringWithCharLimit64"},
+      "max":25,
+      "min":1
     },
     "RelatedEvent":{"type":"string"},
     "RelatedEventList":{
@@ -1177,7 +1265,17 @@
         "AWS::EC2::Volume",
         "AWS::EC2::VPC",
         "AWS::EC2::VPNConnection",
-        "AWS::EC2::VPNGateway"
+        "AWS::EC2::VPNGateway",
+        "AWS::IAM::Group",
+        "AWS::IAM::Policy",
+        "AWS::IAM::Role",
+        "AWS::IAM::User",
+        "AWS::ACM::Certificate",
+        "AWS::RDS::DBInstance",
+        "AWS::RDS::DBSubnetGroup",
+        "AWS::RDS::DBSecurityGroup",
+        "AWS::RDS::DBSnapshot",
+        "AWS::RDS::EventSubscription"
       ]
     },
     "ResourceTypeList":{
@@ -1187,7 +1285,7 @@
     "ResourceTypes":{
       "type":"list",
       "member":{"shape":"StringWithCharLimit256"},
-      "max":100,
+      "max":20,
       "min":0
     },
     "Scope":{
@@ -1211,7 +1309,8 @@
       "type":"structure",
       "members":{
         "EventSource":{"shape":"EventSource"},
-        "MessageType":{"shape":"MessageType"}
+        "MessageType":{"shape":"MessageType"},
+        "MaximumExecutionFrequency":{"shape":"MaximumExecutionFrequency"}
       }
     },
     "SourceDetails":{
@@ -1219,6 +1318,17 @@
       "member":{"shape":"SourceDetail"},
       "max":25,
       "min":0
+    },
+    "StartConfigRulesEvaluationRequest":{
+      "type":"structure",
+      "members":{
+        "ConfigRuleNames":{"shape":"ReevaluateConfigRuleNames"}
+      }
+    },
+    "StartConfigRulesEvaluationResponse":{
+      "type":"structure",
+      "members":{
+      }
     },
     "StartConfigurationRecorderRequest":{
       "type":"structure",
@@ -1250,6 +1360,13 @@
       "max":64,
       "min":1
     },
+    "SupplementaryConfiguration":{
+      "type":"map",
+      "key":{"shape":"SupplementaryConfigurationName"},
+      "value":{"shape":"SupplementaryConfigurationValue"}
+    },
+    "SupplementaryConfigurationName":{"type":"string"},
+    "SupplementaryConfigurationValue":{"type":"string"},
     "Tags":{
       "type":"map",
       "key":{"shape":"Name"},

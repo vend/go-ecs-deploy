@@ -1,7 +1,7 @@
 package: github.com/vend/go-ecs-deploy
 import:
 - package: github.com/aws/aws-sdk-go
-  version: 999b1591218c36d5050d1ba7266eba956e65965f
+  version: d6b4bfeba6997082629986cac2a932a233ba745e
   subpackages:
   - aws
   - private/endpoints

@@ -4,6 +4,7 @@
 package cloudtrail
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws/awsutil"
@@ -12,7 +13,28 @@ import (
 
 const opAddTags = "AddTags"
 
-// AddTagsRequest generates a request for the AddTags operation.
+// AddTagsRequest generates a "aws/request.Request" representing the
+// client's request for the AddTags operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the AddTags method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the AddTagsRequest method.
+//    req, resp := client.AddTagsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) AddTagsRequest(input *AddTagsInput) (req *request.Request, output *AddTagsOutput) {
 	op := &request.Operation{
 		Name:       opAddTags,
@@ -33,7 +55,9 @@ func (c *CloudTrail) AddTagsRequest(input *AddTagsInput) (req *request.Request, 
 // Adds one or more tags to a trail, up to a limit of 10. Tags must be unique
 // per trail. Overwrites an existing tag's value when a new value is specified
 // for an existing tag key. If you specify a key without a value, the tag will
-// be created with the specified key and a value of null.
+// be created with the specified key and a value of null. You can tag a trail
+// that applies to all regions only from the region in which the trail was created
+// (that is, from its home region).
 func (c *CloudTrail) AddTags(input *AddTagsInput) (*AddTagsOutput, error) {
 	req, out := c.AddTagsRequest(input)
 	err := req.Send()
@@ -42,7 +66,28 @@ func (c *CloudTrail) AddTags(input *AddTagsInput) (*AddTagsOutput, error) {
 
 const opCreateTrail = "CreateTrail"
 
-// CreateTrailRequest generates a request for the CreateTrail operation.
+// CreateTrailRequest generates a "aws/request.Request" representing the
+// client's request for the CreateTrail operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the CreateTrail method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the CreateTrailRequest method.
+//    req, resp := client.CreateTrailRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) CreateTrailRequest(input *CreateTrailInput) (req *request.Request, output *CreateTrailOutput) {
 	op := &request.Operation{
 		Name:       opCreateTrail,
@@ -61,7 +106,8 @@ func (c *CloudTrail) CreateTrailRequest(input *CreateTrailInput) (req *request.R
 }
 
 // Creates a trail that specifies the settings for delivery of log data to an
-// Amazon S3 bucket.
+// Amazon S3 bucket. A maximum of five trails can exist in a region, irrespective
+// of the region in which they were created.
 func (c *CloudTrail) CreateTrail(input *CreateTrailInput) (*CreateTrailOutput, error) {
 	req, out := c.CreateTrailRequest(input)
 	err := req.Send()
@@ -70,7 +116,28 @@ func (c *CloudTrail) CreateTrail(input *CreateTrailInput) (*CreateTrailOutput, e
 
 const opDeleteTrail = "DeleteTrail"
 
-// DeleteTrailRequest generates a request for the DeleteTrail operation.
+// DeleteTrailRequest generates a "aws/request.Request" representing the
+// client's request for the DeleteTrail operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the DeleteTrail method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the DeleteTrailRequest method.
+//    req, resp := client.DeleteTrailRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) DeleteTrailRequest(input *DeleteTrailInput) (req *request.Request, output *DeleteTrailOutput) {
 	op := &request.Operation{
 		Name:       opDeleteTrail,
@@ -89,7 +156,8 @@ func (c *CloudTrail) DeleteTrailRequest(input *DeleteTrailInput) (req *request.R
 }
 
 // Deletes a trail. This operation must be called from the region in which the
-// trail was created.
+// trail was created. DeleteTrail cannot be called on the shadow trails (replicated
+// trails in other regions) of a trail that is enabled in all regions.
 func (c *CloudTrail) DeleteTrail(input *DeleteTrailInput) (*DeleteTrailOutput, error) {
 	req, out := c.DeleteTrailRequest(input)
 	err := req.Send()
@@ -98,7 +166,28 @@ func (c *CloudTrail) DeleteTrail(input *DeleteTrailInput) (*DeleteTrailOutput, e
 
 const opDescribeTrails = "DescribeTrails"
 
-// DescribeTrailsRequest generates a request for the DescribeTrails operation.
+// DescribeTrailsRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeTrails operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the DescribeTrails method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the DescribeTrailsRequest method.
+//    req, resp := client.DescribeTrailsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) DescribeTrailsRequest(input *DescribeTrailsInput) (req *request.Request, output *DescribeTrailsOutput) {
 	op := &request.Operation{
 		Name:       opDescribeTrails,
@@ -126,7 +215,28 @@ func (c *CloudTrail) DescribeTrails(input *DescribeTrailsInput) (*DescribeTrails
 
 const opGetTrailStatus = "GetTrailStatus"
 
-// GetTrailStatusRequest generates a request for the GetTrailStatus operation.
+// GetTrailStatusRequest generates a "aws/request.Request" representing the
+// client's request for the GetTrailStatus operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the GetTrailStatus method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the GetTrailStatusRequest method.
+//    req, resp := client.GetTrailStatusRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) GetTrailStatusRequest(input *GetTrailStatusInput) (req *request.Request, output *GetTrailStatusOutput) {
 	op := &request.Operation{
 		Name:       opGetTrailStatus,
@@ -157,7 +267,28 @@ func (c *CloudTrail) GetTrailStatus(input *GetTrailStatusInput) (*GetTrailStatus
 
 const opListPublicKeys = "ListPublicKeys"
 
-// ListPublicKeysRequest generates a request for the ListPublicKeys operation.
+// ListPublicKeysRequest generates a "aws/request.Request" representing the
+// client's request for the ListPublicKeys operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the ListPublicKeys method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the ListPublicKeysRequest method.
+//    req, resp := client.ListPublicKeysRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) ListPublicKeysRequest(input *ListPublicKeysInput) (req *request.Request, output *ListPublicKeysOutput) {
 	op := &request.Operation{
 		Name:       opListPublicKeys,
@@ -179,7 +310,7 @@ func (c *CloudTrail) ListPublicKeysRequest(input *ListPublicKeysInput) (req *req
 // within the specified time range. The public key is needed to validate digest
 // files that were signed with its corresponding private key.
 //
-// CloudTrail uses different private/public key pairs per region. Each digest
+//  CloudTrail uses different private/public key pairs per region. Each digest
 // file is signed with a private key unique to its region. Therefore, when you
 // validate a digest file from a particular region, you must look in the same
 // region for its corresponding public key.
@@ -191,7 +322,28 @@ func (c *CloudTrail) ListPublicKeys(input *ListPublicKeysInput) (*ListPublicKeys
 
 const opListTags = "ListTags"
 
-// ListTagsRequest generates a request for the ListTags operation.
+// ListTagsRequest generates a "aws/request.Request" representing the
+// client's request for the ListTags operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the ListTags method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the ListTagsRequest method.
+//    req, resp := client.ListTagsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) ListTagsRequest(input *ListTagsInput) (req *request.Request, output *ListTagsOutput) {
 	op := &request.Operation{
 		Name:       opListTags,
@@ -218,7 +370,28 @@ func (c *CloudTrail) ListTags(input *ListTagsInput) (*ListTagsOutput, error) {
 
 const opLookupEvents = "LookupEvents"
 
-// LookupEventsRequest generates a request for the LookupEvents operation.
+// LookupEventsRequest generates a "aws/request.Request" representing the
+// client's request for the LookupEvents operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the LookupEvents method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the LookupEventsRequest method.
+//    req, resp := client.LookupEventsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) LookupEventsRequest(input *LookupEventsInput) (req *request.Request, output *LookupEventsOutput) {
 	op := &request.Operation{
 		Name:       opLookupEvents,
@@ -247,10 +420,11 @@ func (c *CloudTrail) LookupEventsRequest(input *LookupEventsInput) (req *request
 // 50 possible. The response includes a token that you can use to get the next
 // page of results.
 //
-// The rate of lookup requests is limited to one per second per account. If
-// this limit is exceeded, a throttling error occurs.  Events that occurred
-// during the selected time range will not be available for lookup if CloudTrail
-// logging was not enabled when the events occurred.
+//  The rate of lookup requests is limited to one per second per account. If
+// this limit is exceeded, a throttling error occurs.
+//
+//   Events that occurred during the selected time range will not be available
+// for lookup if CloudTrail logging was not enabled when the events occurred.
 func (c *CloudTrail) LookupEvents(input *LookupEventsInput) (*LookupEventsOutput, error) {
 	req, out := c.LookupEventsRequest(input)
 	err := req.Send()
@@ -259,7 +433,28 @@ func (c *CloudTrail) LookupEvents(input *LookupEventsInput) (*LookupEventsOutput
 
 const opRemoveTags = "RemoveTags"
 
-// RemoveTagsRequest generates a request for the RemoveTags operation.
+// RemoveTagsRequest generates a "aws/request.Request" representing the
+// client's request for the RemoveTags operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the RemoveTags method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the RemoveTagsRequest method.
+//    req, resp := client.RemoveTagsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) RemoveTagsRequest(input *RemoveTagsInput) (req *request.Request, output *RemoveTagsOutput) {
 	op := &request.Operation{
 		Name:       opRemoveTags,
@@ -286,7 +481,28 @@ func (c *CloudTrail) RemoveTags(input *RemoveTagsInput) (*RemoveTagsOutput, erro
 
 const opStartLogging = "StartLogging"
 
-// StartLoggingRequest generates a request for the StartLogging operation.
+// StartLoggingRequest generates a "aws/request.Request" representing the
+// client's request for the StartLogging operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the StartLogging method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the StartLoggingRequest method.
+//    req, resp := client.StartLoggingRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) StartLoggingRequest(input *StartLoggingInput) (req *request.Request, output *StartLoggingOutput) {
 	op := &request.Operation{
 		Name:       opStartLogging,
@@ -305,6 +521,10 @@ func (c *CloudTrail) StartLoggingRequest(input *StartLoggingInput) (req *request
 }
 
 // Starts the recording of AWS API calls and log file delivery for a trail.
+// For a trail that is enabled in all regions, this operation must be called
+// from the region in which the trail was created. This operation cannot be
+// called on the shadow trails (replicated trails in other regions) of a trail
+// that is enabled in all regions.
 func (c *CloudTrail) StartLogging(input *StartLoggingInput) (*StartLoggingOutput, error) {
 	req, out := c.StartLoggingRequest(input)
 	err := req.Send()
@@ -313,7 +533,28 @@ func (c *CloudTrail) StartLogging(input *StartLoggingInput) (*StartLoggingOutput
 
 const opStopLogging = "StopLogging"
 
-// StopLoggingRequest generates a request for the StopLogging operation.
+// StopLoggingRequest generates a "aws/request.Request" representing the
+// client's request for the StopLogging operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the StopLogging method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the StopLoggingRequest method.
+//    req, resp := client.StopLoggingRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) StopLoggingRequest(input *StopLoggingInput) (req *request.Request, output *StopLoggingOutput) {
 	op := &request.Operation{
 		Name:       opStopLogging,
@@ -334,7 +575,10 @@ func (c *CloudTrail) StopLoggingRequest(input *StopLoggingInput) (req *request.R
 // Suspends the recording of AWS API calls and log file delivery for the specified
 // trail. Under most circumstances, there is no need to use this action. You
 // can update a trail without stopping it first. This action is the only way
-// to stop recording.
+// to stop recording. For a trail enabled in all regions, this operation must
+// be called from the region in which the trail was created, or an InvalidHomeRegionException
+// will occur. This operation cannot be called on the shadow trails (replicated
+// trails in other regions) of a trail enabled in all regions.
 func (c *CloudTrail) StopLogging(input *StopLoggingInput) (*StopLoggingOutput, error) {
 	req, out := c.StopLoggingRequest(input)
 	err := req.Send()
@@ -343,7 +587,28 @@ func (c *CloudTrail) StopLogging(input *StopLoggingInput) (*StopLoggingOutput, e
 
 const opUpdateTrail = "UpdateTrail"
 
-// UpdateTrailRequest generates a request for the UpdateTrail operation.
+// UpdateTrailRequest generates a "aws/request.Request" representing the
+// client's request for the UpdateTrail operation. The "output" return
+// value can be used to capture response data after the request's "Send" method
+// is called.
+//
+// Creating a request object using this method should be used when you want to inject
+// custom logic into the request's lifecycle using a custom handler, or if you want to
+// access properties on the request object before or after sending the request. If
+// you just want the service response, call the UpdateTrail method directly
+// instead.
+//
+// Note: You must call the "Send" method on the returned request object in order
+// to execute the request.
+//
+//    // Example sending a request using the UpdateTrailRequest method.
+//    req, resp := client.UpdateTrailRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
 func (c *CloudTrail) UpdateTrailRequest(input *UpdateTrailInput) (req *request.Request, output *UpdateTrailOutput) {
 	op := &request.Operation{
 		Name:       opUpdateTrail,
@@ -365,6 +630,8 @@ func (c *CloudTrail) UpdateTrailRequest(input *UpdateTrailInput) (req *request.R
 // do not require stopping the CloudTrail service. Use this action to designate
 // an existing bucket for log delivery. If the existing bucket has previously
 // been a target for CloudTrail log files, an IAM policy exists for the bucket.
+// UpdateTrail must be called from the region in which the trail was created;
+// otherwise, an InvalidHomeRegionException is thrown.
 func (c *CloudTrail) UpdateTrail(input *UpdateTrailInput) (*UpdateTrailOutput, error) {
 	req, out := c.UpdateTrailRequest(input)
 	err := req.Send()
@@ -376,7 +643,9 @@ type AddTagsInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the ARN of the trail to which one or more tags will be added. The
-	// format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	ResourceId *string `type:"string" required:"true"`
 
 	// Contains a list of CloudTrail tags, up to a limit of 10.
@@ -391,6 +660,29 @@ func (s AddTagsInput) String() string {
 // GoString returns the string representation
 func (s AddTagsInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *AddTagsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "AddTagsInput"}
+	if s.ResourceId == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceId"))
+	}
+	if s.TagsList != nil {
+		for i, v := range s.TagsList {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "TagsList", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -425,7 +717,7 @@ type CreateTrailInput struct {
 	// Specifies whether log file integrity validation is enabled. The default is
 	// false.
 	//
-	// When you disable log file integrity validation, the chain of digest files
+	//  When you disable log file integrity validation, the chain of digest files
 	// is broken after one hour. CloudTrail will not create digest files for log
 	// files that were delivered during a period in which log file integrity validation
 	// was disabled. For example, if you enable log file integrity validation at
@@ -439,24 +731,38 @@ type CreateTrailInput struct {
 	// as IAM to the log files.
 	IncludeGlobalServiceEvents *bool `type:"boolean"`
 
+	// Specifies whether the trail is created in the current region or in all regions.
+	// The default is false.
+	IsMultiRegionTrail *bool `type:"boolean"`
+
 	// Specifies the KMS key ID to use to encrypt the logs delivered by CloudTrail.
 	// The value can be a an alias name prefixed by "alias/", a fully specified
 	// ARN to an alias, a fully specified ARN to a key, or a globally unique identifier.
 	//
 	// Examples:
 	//
-	//  alias/MyAliasName arn:aws:kms:us-east-1:123456789012:alias/MyAliasName
-	// arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
-	// 12345678-1234-1234-1234-123456789012
+	//   alias/MyAliasName
+	//
+	//   arn:aws:kms:us-east-1:123456789012:alias/MyAliasName
+	//
+	//   arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+	//
+	//   12345678-1234-1234-1234-123456789012
 	KmsKeyId *string `type:"string"`
 
 	// Specifies the name of the trail. The name must meet the following requirements:
 	//
-	//  Contain only ASCII letters (a-z, A-Z), numbers (0-9), periods (.), underscores
-	// (_), or dashes (-) Start with a letter or number, and end with a letter or
-	// number Be between 3 and 128 characters Have no adjacent periods, underscores
-	// or dashes. Names like my-_namespace and my--namespace are invalid. Not be
-	// in IP address format (for example, 192.168.5.4)
+	//   Contain only ASCII letters (a-z, A-Z), numbers (0-9), periods (.), underscores
+	// (_), or dashes (-)
+	//
+	//   Start with a letter or number, and end with a letter or number
+	//
+	//   Be between 3 and 128 characters
+	//
+	//   Have no adjacent periods, underscores or dashes. Names like my-_namespace
+	// and my--namespace are invalid.
+	//
+	//   Not be in IP address format (for example, 192.168.5.4)
 	Name *string `type:"string" required:"true"`
 
 	// Specifies the name of the Amazon S3 bucket designated for publishing log
@@ -484,6 +790,22 @@ func (s CreateTrailInput) GoString() string {
 	return s.String()
 }
 
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CreateTrailInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CreateTrailInput"}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+	if s.S3BucketName == nil {
+		invalidParams.Add(request.NewErrParamRequired("S3BucketName"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Returns the objects or data listed below if successful. Otherwise, returns
 // an error.
 type CreateTrailOutput struct {
@@ -501,10 +823,13 @@ type CreateTrailOutput struct {
 	// as IAM to the log files.
 	IncludeGlobalServiceEvents *bool `type:"boolean"`
 
+	// Specifies whether the trail exists in one region or in all regions.
+	IsMultiRegionTrail *bool `type:"boolean"`
+
 	// Specifies the KMS key ID that encrypts the logs delivered by CloudTrail.
 	// The value is a fully specified ARN to a KMS key in the format:
 	//
-	// arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+	//  arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
 	KmsKeyId *string `type:"string"`
 
 	// Specifies whether log file integrity validation is enabled.
@@ -522,11 +847,19 @@ type CreateTrailOutput struct {
 	// Your CloudTrail Log Files (http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-find-log-files.html).
 	S3KeyPrefix *string `type:"string"`
 
-	// Specifies the name of the Amazon SNS topic defined for notification of log
-	// file delivery.
-	SnsTopicName *string `type:"string"`
+	// Specifies the ARN of the Amazon SNS topic that CloudTrail uses to send notifications
+	// when log files are delivered. The format of a topic ARN is:
+	//
+	//  arn:aws:sns:us-east-1:123456789012:MyTopic
+	SnsTopicARN *string `type:"string"`
 
-	// Specifies the ARN of the trail that was created.
+	// This field is deprecated. Use SnsTopicARN.
+	SnsTopicName *string `deprecated:"true" type:"string"`
+
+	// Specifies the ARN of the trail that was created. The format of a trail ARN
+	// is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	TrailARN *string `type:"string"`
 }
 
@@ -545,7 +878,9 @@ type DeleteTrailInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the name or the CloudTrail ARN of the trail to be deleted. The
-	// format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	Name *string `type:"string" required:"true"`
 }
 
@@ -557,6 +892,19 @@ func (s DeleteTrailInput) String() string {
 // GoString returns the string representation
 func (s DeleteTrailInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DeleteTrailInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DeleteTrailInput"}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -579,10 +927,30 @@ func (s DeleteTrailOutput) GoString() string {
 type DescribeTrailsInput struct {
 	_ struct{} `type:"structure"`
 
+	// Specifies whether to include shadow trails in the response. A shadow trail
+	// is the replication in a region of a trail that was created in a different
+	// region. The default is true.
+	IncludeShadowTrails *bool `locationName:"includeShadowTrails" type:"boolean"`
+
 	// Specifies a list of trail names, trail ARNs, or both, of the trails to describe.
-	// The format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
-	// If an empty list is specified, information for the trail in the current region
-	// is returned.
+	// The format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
+	//
+	// If an empty list is specified, information for the trail in the current
+	// region is returned.
+	//
+	//   If an empty list is specified and IncludeShadowTrails is false, then information
+	// for all trails in the current region is returned.
+	//
+	//   If an empty list is specified and IncludeShadowTrails is null or true,
+	// then information for all trails in the current region and any associated
+	// shadow trails in other regions is returned.
+	//
+	//    If one or more trail names are specified, information is returned only
+	// if the names match the names of trails belonging only to the current region.
+	// To return information about a trail in another region, you must specify its
+	// trail ARN.
 	TrailNameList []*string `locationName:"trailNameList" type:"list"`
 }
 
@@ -655,7 +1023,10 @@ type GetTrailStatusInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the name or the CloudTrail ARN of the trail for which you are requesting
-	// status. The format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// status. To get the status of a shadow trail (a replication of the trail in
+	// another region), you must specify its ARN. The format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	Name *string `type:"string" required:"true"`
 }
 
@@ -667,6 +1038,19 @@ func (s GetTrailStatusInput) String() string {
 // GoString returns the string representation
 func (s GetTrailStatusInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetTrailStatusInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetTrailStatusInput"}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -696,10 +1080,10 @@ type GetTrailStatusOutput struct {
 	// topic Error Responses (http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html)
 	// in the Amazon S3 API Reference.
 	//
-	// This error occurs only when there is a problem with the destination S3 bucket
-	// and will not occur for timeouts. To resolve the issue, create a new bucket
-	// and call UpdateTrail to specify the new bucket, or fix the existing objects
-	// so that CloudTrail can again write to the bucket.
+	//  This error occurs only when there is a problem with the destination S3
+	// bucket and will not occur for timeouts. To resolve the issue, create a new
+	// bucket and call UpdateTrail to specify the new bucket, or fix the existing
+	// objects so that CloudTrail can again write to the bucket.
 	LatestDeliveryError *string `type:"string"`
 
 	// Specifies the date and time that CloudTrail last delivered log files to an
@@ -711,10 +1095,10 @@ type GetTrailStatusOutput struct {
 	// the topic Error Responses (http://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html)
 	// in the Amazon S3 API Reference.
 	//
-	// This error occurs only when there is a problem with the destination S3 bucket
-	// and will not occur for timeouts. To resolve the issue, create a new bucket
-	// and call UpdateTrail to specify the new bucket, or fix the existing objects
-	// so that CloudTrail can again write to the bucket.
+	//  This error occurs only when there is a problem with the destination S3
+	// bucket and will not occur for timeouts. To resolve the issue, create a new
+	// bucket and call UpdateTrail to specify the new bucket, or fix the existing
+	// objects so that CloudTrail can again write to the bucket.
 	LatestDigestDeliveryError *string `type:"string"`
 
 	// Specifies the date and time that CloudTrail last delivered a digest file
@@ -798,7 +1182,7 @@ type ListPublicKeysOutput struct {
 
 	// Contains an array of PublicKey objects.
 	//
-	// The returned public keys may have validity time ranges that overlap.
+	//  The returned public keys may have validity time ranges that overlap.
 	PublicKeyList []*PublicKey `type:"list"`
 }
 
@@ -820,7 +1204,9 @@ type ListTagsInput struct {
 	NextToken *string `type:"string"`
 
 	// Specifies a list of trail ARNs whose tags will be listed. The list has a
-	// limit of 20 ARNs. The format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// limit of 20 ARNs. The format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	ResourceIdList []*string `type:"list" required:"true"`
 }
 
@@ -832,6 +1218,19 @@ func (s ListTagsInput) String() string {
 // GoString returns the string representation
 func (s ListTagsInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ListTagsInput"}
+	if s.ResourceIdList == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceIdList"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -877,6 +1276,22 @@ func (s LookupAttribute) GoString() string {
 	return s.String()
 }
 
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *LookupAttribute) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "LookupAttribute"}
+	if s.AttributeKey == nil {
+		invalidParams.Add(request.NewErrParamRequired("AttributeKey"))
+	}
+	if s.AttributeValue == nil {
+		invalidParams.Add(request.NewErrParamRequired("AttributeValue"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Contains a request for LookupEvents.
 type LookupEventsInput struct {
 	_ struct{} `type:"structure"`
@@ -915,6 +1330,29 @@ func (s LookupEventsInput) String() string {
 // GoString returns the string representation
 func (s LookupEventsInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *LookupEventsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "LookupEventsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+	if s.LookupAttributes != nil {
+		for i, v := range s.LookupAttributes {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "LookupAttributes", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Contains a response to a LookupEvents action.
@@ -958,6 +1396,8 @@ type PublicKey struct {
 	ValidityStartTime *time.Time `type:"timestamp" timestampFormat:"unix"`
 
 	// The DER encoded public key value in PKCS#1 format.
+	//
+	// Value is automatically base64 encoded/decoded by the SDK.
 	Value []byte `type:"blob"`
 }
 
@@ -976,7 +1416,9 @@ type RemoveTagsInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the ARN of the trail from which tags should be removed. The format
-	// of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	ResourceId *string `type:"string" required:"true"`
 
 	// Specifies a list of tags to be removed.
@@ -991,6 +1433,29 @@ func (s RemoveTagsInput) String() string {
 // GoString returns the string representation
 func (s RemoveTagsInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *RemoveTagsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "RemoveTagsInput"}
+	if s.ResourceId == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceId"))
+	}
+	if s.TagsList != nil {
+		for i, v := range s.TagsList {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "TagsList", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -1063,7 +1528,9 @@ type StartLoggingInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the name or the CloudTrail ARN of the trail for which CloudTrail
-	// logs AWS API calls. The format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// logs AWS API calls. The format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	Name *string `type:"string" required:"true"`
 }
 
@@ -1075,6 +1542,19 @@ func (s StartLoggingInput) String() string {
 // GoString returns the string representation
 func (s StartLoggingInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StartLoggingInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "StartLoggingInput"}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -1099,7 +1579,9 @@ type StopLoggingInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the name or the CloudTrail ARN of the trail for which CloudTrail
-	// will stop logging AWS API calls. The format of a trail ARN is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// will stop logging AWS API calls. The format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	Name *string `type:"string" required:"true"`
 }
 
@@ -1111,6 +1593,19 @@ func (s StopLoggingInput) String() string {
 // GoString returns the string representation
 func (s StopLoggingInput) GoString() string {
 	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StopLoggingInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "StopLoggingInput"}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Returns the objects or data listed below if successful. Otherwise, returns
@@ -1152,6 +1647,19 @@ func (s Tag) GoString() string {
 	return s.String()
 }
 
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Tag) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "Tag"}
+	if s.Key == nil {
+		invalidParams.Add(request.NewErrParamRequired("Key"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // The settings for a trail.
 type Trail struct {
 	_ struct{} `type:"structure"`
@@ -1164,14 +1672,20 @@ type Trail struct {
 	// a user's log group.
 	CloudWatchLogsRoleArn *string `type:"string"`
 
+	// The region in which the trail was created.
+	HomeRegion *string `type:"string"`
+
 	// Set to True to include AWS API calls from AWS global services such as IAM.
 	// Otherwise, False.
 	IncludeGlobalServiceEvents *bool `type:"boolean"`
 
+	// Specifies whether the trail belongs only to one region or exists in all regions.
+	IsMultiRegionTrail *bool `type:"boolean"`
+
 	// Specifies the KMS key ID that encrypts the logs delivered by CloudTrail.
 	// The value is a fully specified ARN to a KMS key in the format:
 	//
-	// arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+	//  arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
 	KmsKeyId *string `type:"string"`
 
 	// Specifies whether log file validation is enabled.
@@ -1190,12 +1704,18 @@ type Trail struct {
 	// maximum length is 200 characters.
 	S3KeyPrefix *string `type:"string"`
 
-	// Name of the existing Amazon SNS topic that CloudTrail uses to notify the
-	// account owner when new CloudTrail log files have been delivered. The maximum
-	// length is 256 characters.
-	SnsTopicName *string `type:"string"`
+	// Specifies the ARN of the Amazon SNS topic that CloudTrail uses to send notifications
+	// when log files are delivered. The format of a topic ARN is:
+	//
+	//  arn:aws:sns:us-east-1:123456789012:MyTopic
+	SnsTopicARN *string `type:"string"`
 
-	// The Amazon Resource Name of the trail. The TrailARN format is arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	// This field is deprecated. Use SnsTopicARN.
+	SnsTopicName *string `deprecated:"true" type:"string"`
+
+	// Specifies the ARN of the trail. The format of a trail ARN is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	TrailARN *string `type:"string"`
 }
 
@@ -1224,7 +1744,7 @@ type UpdateTrailInput struct {
 
 	// Specifies whether log file validation is enabled. The default is false.
 	//
-	// When you disable log file integrity validation, the chain of digest files
+	//  When you disable log file integrity validation, the chain of digest files
 	// is broken after one hour. CloudTrail will not create digest files for log
 	// files that were delivered during a period in which log file integrity validation
 	// was disabled. For example, if you enable log file integrity validation at
@@ -1238,26 +1758,47 @@ type UpdateTrailInput struct {
 	// as IAM to the log files.
 	IncludeGlobalServiceEvents *bool `type:"boolean"`
 
+	// Specifies whether the trail applies only to the current region or to all
+	// regions. The default is false. If the trail exists only in the current region
+	// and this value is set to true, shadow trails (replications of the trail)
+	// will be created in the other regions. If the trail exists in all regions
+	// and this value is set to false, the trail will remain in the region where
+	// it was created, and its shadow trails in other regions will be deleted.
+	IsMultiRegionTrail *bool `type:"boolean"`
+
 	// Specifies the KMS key ID to use to encrypt the logs delivered by CloudTrail.
 	// The value can be a an alias name prefixed by "alias/", a fully specified
 	// ARN to an alias, a fully specified ARN to a key, or a globally unique identifier.
 	//
 	// Examples:
 	//
-	//  alias/MyAliasName arn:aws:kms:us-east-1:123456789012:alias/MyAliasName
-	// arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
-	// 12345678-1234-1234-1234-123456789012
+	//   alias/MyAliasName
+	//
+	//   arn:aws:kms:us-east-1:123456789012:alias/MyAliasName
+	//
+	//   arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+	//
+	//   12345678-1234-1234-1234-123456789012
 	KmsKeyId *string `type:"string"`
 
 	// Specifies the name of the trail or trail ARN. If Name is a trail name, the
 	// string must meet the following requirements:
 	//
-	//  Contain only ASCII letters (a-z, A-Z), numbers (0-9), periods (.), underscores
-	// (_), or dashes (-) Start with a letter or number, and end with a letter or
-	// number Be between 3 and 128 characters Have no adjacent periods, underscores
-	// or dashes. Names like my-_namespace and my--namespace are invalid. Not be
-	// in IP address format (for example, 192.168.5.4)  If Name is a trail ARN,
-	// it must be in the format arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail.
+	//   Contain only ASCII letters (a-z, A-Z), numbers (0-9), periods (.), underscores
+	// (_), or dashes (-)
+	//
+	//   Start with a letter or number, and end with a letter or number
+	//
+	//   Be between 3 and 128 characters
+	//
+	//   Have no adjacent periods, underscores or dashes. Names like my-_namespace
+	// and my--namespace are invalid.
+	//
+	//   Not be in IP address format (for example, 192.168.5.4)
+	//
+	//   If Name is a trail ARN, it must be in the format:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	Name *string `type:"string" required:"true"`
 
 	// Specifies the name of the Amazon S3 bucket designated for publishing log
@@ -1285,6 +1826,19 @@ func (s UpdateTrailInput) GoString() string {
 	return s.String()
 }
 
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UpdateTrailInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UpdateTrailInput"}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Returns the objects or data listed below if successful. Otherwise, returns
 // an error.
 type UpdateTrailOutput struct {
@@ -1302,10 +1856,13 @@ type UpdateTrailOutput struct {
 	// as IAM to the log files.
 	IncludeGlobalServiceEvents *bool `type:"boolean"`
 
+	// Specifies whether the trail exists in one region or in all regions.
+	IsMultiRegionTrail *bool `type:"boolean"`
+
 	// Specifies the KMS key ID that encrypts the logs delivered by CloudTrail.
 	// The value is a fully specified ARN to a KMS key in the format:
 	//
-	// arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
+	//  arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012
 	KmsKeyId *string `type:"string"`
 
 	// Specifies whether log file integrity validation is enabled.
@@ -1323,11 +1880,19 @@ type UpdateTrailOutput struct {
 	// Your CloudTrail Log Files (http://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-find-log-files.html).
 	S3KeyPrefix *string `type:"string"`
 
-	// Specifies the name of the Amazon SNS topic defined for notification of log
-	// file delivery.
-	SnsTopicName *string `type:"string"`
+	// Specifies the ARN of the Amazon SNS topic that CloudTrail uses to send notifications
+	// when log files are delivered. The format of a topic ARN is:
+	//
+	//  arn:aws:sns:us-east-1:123456789012:MyTopic
+	SnsTopicARN *string `type:"string"`
 
-	// Specifies the ARN of the trail that was updated.
+	// This field is deprecated. Use SnsTopicARN.
+	SnsTopicName *string `deprecated:"true" type:"string"`
+
+	// Specifies the ARN of the trail that was updated. The format of a trail ARN
+	// is:
+	//
+	//  arn:aws:cloudtrail:us-east-1:123456789012:trail/MyTrail
 	TrailARN *string `type:"string"`
 }
 
