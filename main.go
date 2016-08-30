@@ -78,7 +78,8 @@ func main() {
 			&ecs.RegisterTaskDefinitionInput{
 				ContainerDefinitions: taskDesc.TaskDefinition.ContainerDefinitions,
 				Family:               appName,
-				Volumes:              taskDesc.TaskDefinition.Volumes,
+				NetworkMode:          taskDesc.TaskDefinition.NetworkMode,
+				TaskRoleArn:          taskDesc.TaskDefinition.TaskRoleArn,
 			})
 	if err != nil {
 		println(err.Error())
