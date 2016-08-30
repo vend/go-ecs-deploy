@@ -5,7 +5,9 @@ Allows deployment of ECS microservices straight from the command line!
 
 ## Installation
 
-    $ go get github.com/vend/go-ecs-deploy
+```
+go get github.com/vend/go-ecs-deploy
+```
 
 ## Usage
 
@@ -18,3 +20,10 @@ Run the command:
 ```
 AWS_PROFILE=production go-ecs-deploy -c vend-production -a authome -i quay.io/username/reponame -e production -s 5304a1b -r us-west-2
 ```
+
+## Development
+
+To update dependencies, open up `glide.yaml` and update the `version:` field for
+the relevant package(s).
+
+Then run `glide up`
