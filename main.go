@@ -17,6 +17,7 @@ var (
 	environment = flag.String("e", "", "Application environment, e.g. production")
 	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
 	region      = flag.String("r", "", "AWS region")
+	debug       = flag.Bool("d", false, "enable Debug output")
 )
 
 func main() {
@@ -67,20 +68,29 @@ func main() {
 		os.Exit(2)
 	}
 
+	if *debug {
+		fmt.Printf("Current task description: \n%+v \n", taskDesc)
+	}
+
 	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
 	{
 		x := fmt.Sprintf("%s:%s", *repoName, *sha)
 		containerDef.Image = &x
 	}
 
+	futureDef := &ecs.RegisterTaskDefinitionInput{
+		ContainerDefinitions: taskDesc.TaskDefinition.ContainerDefinitions,
+		Family:               appName,
+		NetworkMode:          taskDesc.TaskDefinition.NetworkMode,
+		TaskRoleArn:          taskDesc.TaskDefinition.TaskRoleArn,
+	}
+
+	if *debug {
+		fmt.Printf("Future task description: \n%+v \n", futureDef)
+	}
+
 	registerRes, err :=
-		svc.RegisterTaskDefinition(
-			&ecs.RegisterTaskDefinitionInput{
-				ContainerDefinitions: taskDesc.TaskDefinition.ContainerDefinitions,
-				Family:               appName,
-				NetworkMode:          taskDesc.TaskDefinition.NetworkMode,
-				TaskRoleArn:          taskDesc.TaskDefinition.TaskRoleArn,
-			})
+		svc.RegisterTaskDefinition(futureDef)
 	if err != nil {
 		println(err.Error())
 		os.Exit(2)
