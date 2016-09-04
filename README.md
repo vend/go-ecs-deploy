@@ -18,7 +18,13 @@ You need:
 Run the command:
 
 ```
-AWS_PROFILE=production go-ecs-deploy -c vend-production -a authome -i quay.io/username/reponame -e production -s 5304a1b -r us-west-2
+AWS_PROFILE=production go-ecs-deploy \
+  -c vend-production \
+  -a authome \
+  -i quay.io/username/reponame \
+  -e production \
+  -s 5304a1b \
+  -r us-west-2
 ```
 
 ## Development
