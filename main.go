@@ -102,6 +102,7 @@ func main() {
 	}
 
 	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
+	oldImage := containerDef.Image
 	{
 		x := fmt.Sprintf("%s:%s", *repoName, *sha)
 		containerDef.Image = &x
@@ -142,8 +143,15 @@ func main() {
 	}
 
 	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
-	if gitURL, err := gitURL(*sha); err == nil {
-		slackMsg += "\n<" + gitURL + "|Compare> on github"
+
+	// extract old image sha, and use it to generate a git compare URL
+	if *oldImage != "" {
+		parts := strings.Split(*oldImage, ":")
+		if len(parts) == 2 {
+			if gitURL, err := gitURL(parts[1]); err == nil {
+				slackMsg += "\n<" + gitURL + "|Compare> on github"
+			}
+		}
 	}
 	webhookFunc(slackMsg)
 
@@ -153,12 +161,12 @@ func main() {
 
 // gitURL uses git since the program runs in many CI environments
 func gitURL(startSHA string) (string, error) {
-	repoURL, err := exec.Command("git config --get remote.origin.url").Output()
+	repoURL, err := exec.Command("git", "config", "--get", "remote.origin.url").Output()
 	if err != nil {
 		return "", err
 	}
 
-	endSHA, err := exec.Command("git rev-parse --short HEAD").Output()
+	endSHA, err := exec.Command("git", "rev-parse", "--short HEAD").Output()
 	if err != nil {
 		return "", err
 	}
