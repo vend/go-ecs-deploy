@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -139,8 +141,28 @@ func main() {
 		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
 	}
 
-	webhookFunc(fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn))
+	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
+	if gitURL, err := gitURL(*sha); err == nil {
+		slackMsg += "\n<" + gitURL + "|Compare> on github"
+	}
+	webhookFunc(slackMsg)
 
 	fmt.Printf("Updated %s service to use new ARN: %s \n", serviceName, *newArn)
 
+}
+
+// gitURL uses git since the program runs in many CI environments
+func gitURL(startSHA string) (string, error) {
+	repoURL, err := exec.Command("git config --get remote.origin.url").Output()
+	if err != nil {
+		return "", err
+	}
+
+	endSHA, err := exec.Command("git rev-parse --short HEAD").Output()
+	if err != nil {
+		return "", err
+	}
+
+	url := string(repoURL) + "/compare/" + startSHA + "..." + string(endSHA)
+	return strings.TrimSpace(url), nil
 }
