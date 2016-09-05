@@ -139,7 +139,7 @@ func main() {
 		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
 	}
 
-	webhookFunc(fmt.Sprintf("Deployed %s for %s to %s as %s", *containerDef.Image, *appName, *clusterName, *newArn))
+	webhookFunc(fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn))
 
 	fmt.Printf("Updated %s service to use new ARN: %s \n", serviceName, *newArn)
 
