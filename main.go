@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -17,15 +20,41 @@ var (
 	environment = flag.String("e", "", "Application environment, e.g. production")
 	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
 	region      = flag.String("r", "", "AWS region")
+	webhook     = flag.String("w", "", "Webhook (slack) to post to")
 	debug       = flag.Bool("d", false, "enable Debug output")
 )
+
+func fail(s string) {
+	fmt.Printf(s)
+	webhookFunc(s)
+	os.Exit(2)
+}
+
+func webhookFunc(s string) {
+	if *webhook == "" {
+		return
+	}
+
+	json, _ := json.Marshal(
+		struct {
+			Text     string `json:"text"`
+			Username string `json:"username"`
+		}{
+			s,
+			"go-ecs-deploy",
+		},
+	)
+
+	reader := bytes.NewReader(json)
+	http.Post(*webhook, "application/json", reader)
+}
 
 func main() {
 	flag.Parse()
 
 	if *clusterName == "" || *repoName == "" || *appName == "" || *environment == "" || *sha == "" || *region == "" {
 		flag.Usage()
-		os.Exit(-1)
+		fail(fmt.Sprintf("Failed deployment %s \n`bad paramaters`", *appName))
 	}
 
 	serviceName := *appName + "-" + *environment
@@ -42,19 +71,18 @@ func main() {
 				Services: []*string{&serviceName},
 			})
 	if err != nil {
-		println(err.Error())
-		os.Exit(2)
+		fail(fmt.Sprintf("Failed: deployment %s \n`%s`", *appName, err.Error()))
 	}
 
 	if len(serviceDesc.Services) < 1 {
-		fmt.Printf("No service %s found on cluster %s\n", serviceName, *clusterName)
-		os.Exit(2)
+		msg := fmt.Sprintf("No service %s found on cluster %s", serviceName, *clusterName)
+		fail("Failed: " + msg)
 	}
 
 	service := serviceDesc.Services[0]
 	if serviceName != *service.ServiceName {
-		fmt.Printf("Found the wrong service when looking for %s found %s \n", serviceName, *service.ServiceName)
-		os.Exit(2)
+		msg := fmt.Sprintf("Found the wrong service when looking for %s found %s \n", serviceName, *service.ServiceName)
+		fail("Failed: " + msg)
 	}
 
 	fmt.Printf("Found existing ARN %s for service %s \n", *service.ClusterArn, *service.ServiceName)
@@ -64,8 +92,7 @@ func main() {
 			&ecs.DescribeTaskDefinitionInput{
 				TaskDefinition: service.TaskDefinition})
 	if err != nil {
-		println(err.Error())
-		os.Exit(2)
+		fail(fmt.Sprintf("Failed: deployment %s \n`%s`", *appName, err.Error()))
 	}
 
 	if *debug {
@@ -93,8 +120,7 @@ func main() {
 	registerRes, err :=
 		svc.RegisterTaskDefinition(futureDef)
 	if err != nil {
-		println(err.Error())
-		os.Exit(2)
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerDef.Image, *appName, *clusterName, err.Error()))
 	}
 
 	newArn := registerRes.TaskDefinition.TaskDefinitionArn
@@ -110,9 +136,10 @@ func main() {
 			TaskDefinition: newArn,
 		})
 	if err != nil {
-		println(err.Error())
-		os.Exit(2)
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
 	}
+
+	webhookFunc(fmt.Sprintf("Deployed %s for %s to %s as %s", *containerDef.Image, *appName, *clusterName, *newArn))
 
 	fmt.Printf("Updated %s service to use new ARN: %s \n", serviceName, *newArn)
 
