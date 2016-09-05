@@ -41,7 +41,7 @@ func webhookFunc(s string) {
 			Username string `json:"username"`
 		}{
 			s,
-			"go-ecs-deploy",
+			"GO ECS Deploy",
 		},
 	)
 
