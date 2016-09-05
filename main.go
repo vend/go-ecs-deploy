@@ -139,10 +139,10 @@ func main() {
 			TaskDefinition: newArn,
 		})
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *serviceName, *clusterName, *newArn, err.Error()))
 	}
 
-	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
+	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *serviceName, *clusterName, *newArn)
 
 	// extract old image sha, and use it to generate a git compare URL
 	if *oldImage != "" {
