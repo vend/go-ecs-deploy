@@ -149,7 +149,7 @@ func main() {
 		parts := strings.Split(*oldImage, ":")
 		if len(parts) == 2 {
 			if gitURL, err := gitURL(parts[1], *sha); err == nil {
-				slackMsg += "\n<" + gitURL + "|Compare> on github"
+				slackMsg += " (<" + gitURL + "|diff>)"
 			}
 		}
 	}
