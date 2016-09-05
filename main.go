@@ -3,11 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -148,7 +148,7 @@ func main() {
 	if *oldImage != "" {
 		parts := strings.Split(*oldImage, ":")
 		if len(parts) == 2 {
-			if gitURL, err := gitURL(parts[1]); err == nil {
+			if gitURL, err := gitURL(parts[1], *sha); err == nil {
 				slackMsg += "\n<" + gitURL + "|Compare> on github"
 			}
 		}
@@ -160,17 +160,23 @@ func main() {
 }
 
 // gitURL uses git since the program runs in many CI environments
-func gitURL(startSHA string) (string, error) {
-	repoURL, err := exec.Command("git", "config", "--get", "remote.origin.url").Output()
-	if err != nil {
-		return "", err
+func gitURL(startSHA string, endSHA string) (string, error) {
+	var project string
+
+	if travisSlug, ok := os.LookupEnv("TRAVIS_REPO_SLUG"); ok {
+		project = travisSlug
 	}
 
-	endSHA, err := exec.Command("git", "rev-parse", "--short HEAD").Output()
-	if err != nil {
-		return "", err
+	if werckerOwner, ok := os.LookupEnv("WERCKER_GIT_OWNER"); ok {
+		if werckerRepo, ok := os.LookupEnv("WERCKER_GIT_REPOSITORY"); ok {
+			project = werckerOwner + "/" + werckerRepo
+		}
 	}
 
-	url := string(repoURL) + "/compare/" + startSHA + "..." + string(endSHA)
-	return strings.TrimSpace(url), nil
+	if project == "" {
+		return "", errors.New("nope")
+	}
+
+	url := "https://github.com/" + project + "/compare/" + startSHA + "..." + endSHA
+	return url, nil
 }
