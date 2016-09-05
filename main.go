@@ -20,7 +20,7 @@ var (
 	environment = flag.String("e", "", "Application environment, e.g. production")
 	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
 	region      = flag.String("r", "", "AWS region")
-	webhook     = flag.String("w", "", "Webhook (slack) to post to")
+	webhook     = flag.String("w", "", "Webhook (slack) URL to post to")
 	debug       = flag.Bool("d", false, "enable Debug output")
 )
 
