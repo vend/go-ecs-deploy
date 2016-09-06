@@ -146,9 +146,11 @@ func main() {
 
 	// extract old image sha, and use it to generate a git compare URL
 	if *oldImage != "" {
-		parts := strings.FieldsFunc(*oldImage, func(r rune) bool { return strings.ContainsRune(":-", r) })
-		if len(parts) >= 2 {
-			if gitURL, err := gitURL(parts[1], *sha); err == nil {
+		parts := strings.Split(*oldImage, ":")
+		if len(parts) == 2 {
+			// possibly a tagged image "def15c31-php5.5"
+			parts = strings.Split(parts[1], "-")
+			if gitURL, err := gitURL(parts[0], *sha); err == nil {
 				slackMsg += " (<" + gitURL + "|diff>)"
 			}
 		}
