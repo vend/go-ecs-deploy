@@ -23,6 +23,7 @@ var (
 	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
 	region      = flag.String("r", "", "AWS region")
 	webhook     = flag.String("w", "", "Webhook (slack) URL to post to")
+	targetImage = flag.String("t", "", "Target image (overrides -s and -i)")
 	debug       = flag.Bool("d", false, "enable Debug output")
 )
 
@@ -54,9 +55,20 @@ func webhookFunc(s string) {
 func main() {
 	flag.Parse()
 
-	if *clusterName == "" || *repoName == "" || *appName == "" || *environment == "" || *sha == "" || *region == "" {
+	if *clusterName == "" || *appName == "" || *environment == "" || *region == "" {
 		flag.Usage()
-		fail(fmt.Sprintf("Failed deployment %s \n`bad paramaters`", *appName))
+		fail(fmt.Sprintf("Failed deployment %s \n`bad parameters`", *appName))
+	}
+
+	if *repoName == "" || *sha == "" {
+		if *targetImage == "" {
+			flag.Usage()
+			fail(fmt.Sprintf("Failed deployment %s \n`no repo name, sha or target image specified`", *appName))
+		} else {
+			x := fmt.Sprintf("%s", *targetImage)
+		}
+	} else {
+		x := fmt.Sprintf("%s:%s", *repoName, *sha)
 	}
 
 	serviceName := *appName + "-" + *environment
@@ -65,7 +77,7 @@ func main() {
 
 	fmt.Printf("Request to deploy sha: %s to %s at %s \n", *sha, *environment, *region)
 	fmt.Printf("Describing services for cluster %s and service %s \n", *clusterName, serviceName)
-
+	fail("DEBUG EXIT NOW")
 	serviceDesc, err :=
 		svc.DescribeServices(
 			&ecs.DescribeServicesInput{
@@ -103,10 +115,7 @@ func main() {
 
 	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
 	oldImage := containerDef.Image
-	{
-		x := fmt.Sprintf("%s:%s", *repoName, *sha)
-		containerDef.Image = &x
-	}
+	containerImage := &x
 
 	futureDef := &ecs.RegisterTaskDefinitionInput{
 		ContainerDefinitions: taskDesc.TaskDefinition.ContainerDefinitions,
@@ -123,7 +132,7 @@ func main() {
 	registerRes, err :=
 		svc.RegisterTaskDefinition(futureDef)
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerDef.Image, *appName, *clusterName, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerImage, *appName, *clusterName, err.Error()))
 	}
 
 	newArn := registerRes.TaskDefinition.TaskDefinitionArn
@@ -139,13 +148,13 @@ func main() {
 			TaskDefinition: newArn,
 		})
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerImage, *appName, *clusterName, *newArn, err.Error()))
 	}
 
-	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
+	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerImage, *appName, *clusterName, *newArn)
 
 	// extract old image sha, and use it to generate a git compare URL
-	if *oldImage != "" {
+	if *oldImage != "" && *sha != "" {
 		parts := strings.Split(*oldImage, ":")
 		if len(parts) == 2 {
 			// possibly a tagged image "def15c31-php5.5"
