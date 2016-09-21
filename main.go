@@ -60,7 +60,7 @@ func main() {
 		fail(fmt.Sprintf("Failed deployment %s : missing parameters\n", *appName))
 	}
 
-	if (*repoName == "" && *sha == "") && *targetImage == "" {
+	if (*repoName == "" || *sha == "") && *targetImage == "" {
 		flag.Usage()
 		fail(fmt.Sprintf("Failed deployment %s : no repo name, sha or target image specified\n", *appName))
 	}
