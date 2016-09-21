@@ -23,6 +23,7 @@ var (
 	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
 	region      = flag.String("r", "", "AWS region")
 	webhook     = flag.String("w", "", "Webhook (slack) URL to post to")
+	targetImage = flag.String("t", "", "Target image (overrides -s and -i)")
 	debug       = flag.Bool("d", false, "enable Debug output")
 )
 
@@ -54,18 +55,27 @@ func webhookFunc(s string) {
 func main() {
 	flag.Parse()
 
-	if *clusterName == "" || *repoName == "" || *appName == "" || *environment == "" || *sha == "" || *region == "" {
+	if *clusterName == "" || *appName == "" || *environment == "" || *region == "" {
 		flag.Usage()
-		fail(fmt.Sprintf("Failed deployment %s \n`bad paramaters`", *appName))
+		fail(fmt.Sprintf("Failed deployment %s : missing parameters\n", *appName))
+	}
+
+	if (*repoName == "" || *sha == "") && *targetImage == "" {
+		flag.Usage()
+		fail(fmt.Sprintf("Failed deployment %s : no repo name, sha or target image specified\n", *appName))
 	}
 
 	serviceName := *appName + "-" + *environment
 
 	svc := ecs.New(session.New(), &aws.Config{Region: aws.String(*region)})
 
-	fmt.Printf("Request to deploy sha: %s to %s at %s \n", *sha, *environment, *region)
+	if *targetImage == "" {
+		fmt.Printf("Request to deploy sha: %s to %s at %s \n", *sha, *environment, *region)
+	} else {
+		fmt.Printf("Request to deploy target image: %s to %s at %s \n", *targetImage, *environment, *region)
+	}
 	fmt.Printf("Describing services for cluster %s and service %s \n", *clusterName, serviceName)
-
+	fail("DEBUG EXIT NOW")
 	serviceDesc, err :=
 		svc.DescribeServices(
 			&ecs.DescribeServicesInput{
@@ -104,7 +114,10 @@ func main() {
 	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
 	oldImage := containerDef.Image
 	{
-		x := fmt.Sprintf("%s:%s", *repoName, *sha)
+		x := *targetImage
+		if *targetImage == "" {
+			x = fmt.Sprintf("%s:%s", *repoName, *sha)
+		}
 		containerDef.Image = &x
 	}
 
@@ -145,7 +158,7 @@ func main() {
 	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
 
 	// extract old image sha, and use it to generate a git compare URL
-	if *oldImage != "" {
+	if *oldImage != "" && *sha != "" {
 		parts := strings.Split(*oldImage, ":")
 		if len(parts) == 2 {
 			// possibly a tagged image "def15c31-php5.5"
