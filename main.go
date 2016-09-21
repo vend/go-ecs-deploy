@@ -69,7 +69,11 @@ func main() {
 
 	svc := ecs.New(session.New(), &aws.Config{Region: aws.String(*region)})
 
-	fmt.Printf("Request to deploy sha: %s to %s at %s \n", *sha, *environment, *region)
+	if *targetImage == "" {
+		fmt.Printf("Request to deploy sha: %s to %s at %s \n", *sha, *environment, *region)
+	} else {
+		fmt.Printf("Request to deploy target image: %s to %s at %s \n", *targetImage, *environment, *region)
+	}
 	fmt.Printf("Describing services for cluster %s and service %s \n", *clusterName, serviceName)
 	fail("DEBUG EXIT NOW")
 	serviceDesc, err :=
