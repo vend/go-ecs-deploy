@@ -1,11 +1,17 @@
 language: go
 go: 1.7
-
 before_install:
-  - go get -v github.com/Masterminds/glide
-
+- go get -v github.com/Masterminds/glide
 install: true
-
 script:
-  - go test $(glide nv)
-  - CGO_ENABLED=0 GOOS="linux" go build
+- go test $(glide nv)
+- CGO_ENABLED=0 GOOS="linux" go build
+deploy:
+  provider: releases
+  api_key:
+    secure: YETpfA6DA6BOXA1zWOO2xb7D9oawI8zmikXlCb2BnRWEhngLGNLD9qAU2UsTrs89QGmogCnIUcTOIimEUA1KwpTnDHaziJLahWFvSW+yROL85q2QdFNMU0kTfmh7+cAvRyJJsvOgwODDzYOVDUKPQwY9/OvXTu116OT9P1WiV1UNdpjJHPia4M4msWStt86keikzLjT0EOgrOHhnVPrgBWD/yINbbyLEF1iMIIcCbtSRM2UGX8E1+JGblM6JXignMDY3aXrxW/n585icKrDX7/+o6l7PV94yKfQT1jt2RPj3YBi90MOm9D9mbytdF7QCnevq74IEuVPkEyJI619bn5px+Cwpv5wQxNpJk0vzsEzIpcZuFPu0HNiB3qgTV8sERBhkzP7o7O24j1Xav7SEmrgmiQQpAmS+eyYmI48WWPZPxb2Toc5QxzXpztTjSHQlUMBxd6caRfh+atrJvhrytauQUX82cNHAi7PMpOJ7NZHTz0WAPbJumYmwM+eG04vuTUdVRZ8/R7mnzQeA8wMhPUw4UrMEr8PJU8mjJ9S3ZPllRnDS9qlZhFfLJIvkmarLC2YFo/N0E4d+9q3vLhIj26iPCJ13n/xaLALrqF6sr9rwZfjuCaSxMEoWEE6dBY+SZFswbO+KBlMsovgVVuicmvB0fZz7eKrVD9H5z87uI1U=
+  file: go-ecs-deploy
+  on:
+    repo: vend/go-ecs-deploy
+  on:
+    tags: true
