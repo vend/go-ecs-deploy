@@ -75,7 +75,7 @@ func main() {
 		fmt.Printf("Request to deploy target image: %s to %s at %s \n", *targetImage, *environment, *region)
 	}
 	fmt.Printf("Describing services for cluster %s and service %s \n", *clusterName, serviceName)
-	fail("DEBUG EXIT NOW")
+
 	serviceDesc, err :=
 		svc.DescribeServices(
 			&ecs.DescribeServicesInput{
