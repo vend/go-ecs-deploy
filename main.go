@@ -57,18 +57,12 @@ func main() {
 
 	if *clusterName == "" || *appName == "" || *environment == "" || *region == "" {
 		flag.Usage()
-		fail(fmt.Sprintf("Failed deployment %s \n`bad parameters`", *appName))
+		fail(fmt.Sprintf("Failed deployment %s : missing parameters\n", *appName))
 	}
 
-	if *repoName == "" || *sha == "" {
-		if *targetImage == "" {
-			flag.Usage()
-			fail(fmt.Sprintf("Failed deployment %s \n`no repo name, sha or target image specified`", *appName))
-		} else {
-			x := fmt.Sprintf("%s", *targetImage)
-		}
-	} else {
-		x := fmt.Sprintf("%s:%s", *repoName, *sha)
+	if (*repoName == "" && *sha == "") && *targetImage == "" {
+		flag.Usage()
+		fail(fmt.Sprintf("Failed deployment %s : no repo name, sha or target image specified\n", *appName))
 	}
 
 	serviceName := *appName + "-" + *environment
@@ -115,7 +109,13 @@ func main() {
 
 	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
 	oldImage := containerDef.Image
-	containerImage := &x
+	{
+		x := *targetImage
+		if *targetImage == "" {
+			x = fmt.Sprintf("%s:%s", *repoName, *sha)
+		}
+		containerDef.Image = &x
+	}
 
 	futureDef := &ecs.RegisterTaskDefinitionInput{
 		ContainerDefinitions: taskDesc.TaskDefinition.ContainerDefinitions,
@@ -132,7 +132,7 @@ func main() {
 	registerRes, err :=
 		svc.RegisterTaskDefinition(futureDef)
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerImage, *appName, *clusterName, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerDef.Image, *appName, *clusterName, err.Error()))
 	}
 
 	newArn := registerRes.TaskDefinition.TaskDefinitionArn
@@ -148,10 +148,10 @@ func main() {
 			TaskDefinition: newArn,
 		})
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerImage, *appName, *clusterName, *newArn, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
 	}
 
-	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerImage, *appName, *clusterName, *newArn)
+	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
 
 	// extract old image sha, and use it to generate a git compare URL
 	if *oldImage != "" && *sha != "" {
