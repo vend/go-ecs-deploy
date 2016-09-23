@@ -9,13 +9,41 @@ Allows deployment of ECS microservices straight from the command line!
 go get github.com/vend/go-ecs-deploy
 ```
 
-## Usage
+## Requirements
 
 You need:
+
 - Valid AWS credentials for the place you're deploying to (in your ENV)
 - An existing task definition - this won't create one for you
 
-Run the command:
+## Usage
+
+The full list of options is:
+
+```
+Usage of ./go-ecs-deploy:
+  -C value
+        Slack channels to post to (can be specified multiple times)
+  -a string
+        Application name
+  -c string
+        Cluster name to deploy to
+  -d    enable Debug output
+  -e string
+        Application environment, e.g. production
+  -i string
+        Container repo to pull from e.g. quay.io/username/reponame
+  -r string
+        AWS region
+  -s string
+        Tag, usually short git SHA to deploy
+  -t string
+        Target image (overrides -s and -i)
+  -w string
+        Webhook (slack) URL to post to
+```
+
+### Example
 
 ```
 AWS_PROFILE=production go-ecs-deploy \
