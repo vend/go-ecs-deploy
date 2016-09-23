@@ -15,46 +15,68 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecs"
 )
 
+type arrayFlag []string
+
+func (flags *arrayFlag) String() string {
+	return strings.Join(*flags, ",")
+}
+
+func (flags *arrayFlag) Set(value string) error {
+	*flags = append(*flags, value)
+	return nil
+}
+
 var (
 	clusterName = flag.String("c", "", "Cluster name to deploy to")
-	repoName    = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
-	appName     = flag.String("a", "", "Application name")
+	repoName = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
+	appName = flag.String("a", "", "Application name")
 	environment = flag.String("e", "", "Application environment, e.g. production")
-	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
-	region      = flag.String("r", "", "AWS region")
-	webhook     = flag.String("w", "", "Webhook (slack) URL to post to")
+	sha = flag.String("s", "", "Tag, usually short git SHA to deploy")
+	region = flag.String("r", "", "AWS region")
+	webhook = flag.String("w", "", "Webhook (slack) URL to post to")
 	targetImage = flag.String("t", "", "Target image (overrides -s and -i)")
-	debug       = flag.Bool("d", false, "enable Debug output")
+	debug = flag.Bool("d", false, "enable Debug output")
 )
+
+var channels arrayFlag
 
 func fail(s string) {
 	fmt.Printf(s)
-	webhookFunc(s)
+	sendWebhooks(s)
 	os.Exit(2)
 }
 
-func webhookFunc(s string) {
-	if *webhook == "" {
-		return
-	}
+type SlackMessage struct {
+	Text     string `json:"text"`
+	Username string `json:"username"`
+	Channel  *string `json:"channel,omitempty"`
+}
 
-	json, _ := json.Marshal(
-		struct {
-			Text     string `json:"text"`
-			Username string `json:"username"`
-		}{
-			s,
-			"GO ECS Deploy",
-		},
-	)
-
+func sendWebhook(message string, url *string, channel *string) {
+	json, _ := json.Marshal(SlackMessage{
+		Text: message,
+		Username: "GO ECS Deploy",
+		Channel: channel,
+	})
 	reader := bytes.NewReader(json)
-	http.Post(*webhook, "application/json", reader)
+	http.Post(*url, "application/json", reader)
+}
+
+func sendWebhooks(message string) {
+	if (len(channels) > 0) {
+		for _, channel := range channels {
+			sendWebhook(message, webhook, &channel)
+		}
+	} else {
+		sendWebhook(message, webhook, nil)
+	}
+}
+
+func init() {
+	flag.Var(&channels, "C", "Slack channels to post to (can be specified multiple times)")
 }
 
 func main() {
-	flag.Parse()
-
 	if *clusterName == "" || *appName == "" || *environment == "" || *region == "" {
 		flag.Usage()
 		fail(fmt.Sprintf("Failed deployment %s : missing parameters\n", *appName))
@@ -168,7 +190,7 @@ func main() {
 			}
 		}
 	}
-	webhookFunc(slackMsg)
+	sendWebhooks(slackMsg)
 
 	fmt.Printf("Updated %s service to use new ARN: %s \n", serviceName, *newArn)
 
