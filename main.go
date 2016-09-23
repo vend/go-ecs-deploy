@@ -46,30 +46,18 @@ func fail(s string) {
 	os.Exit(2)
 }
 
+type SlackMessage struct {
+	Text     string `json:"text"`
+	Username string `json:"username"`
+	Channel  *string `json:"channel,omitempty"`
+}
+
 func sendWebhook(message string, url *string, channel *string) {
-	var request interface{}
-
-	if (channel != nil) {
-		request = struct {
-			Text     string `json:"text"`
-			Username string `json:"username"`
-			Channel  string `json:"channel"`
-		}{
-			message,
-			"GO ECS Deploy",
-			*channel,
-		}
-	} else {
-		request = struct {
-			Text     string `json:"text"`
-			Username string `json:"username"`
-		}{
-			message,
-			"GO ECS Deploy",
-		}
-	}
-
-	json, _ := json.Marshal(request)
+	json, _ := json.Marshal(SlackMessage{
+		Text: message,
+		Username: "GO ECS Deploy",
+		Channel: channel,
+	})
 	reader := bytes.NewReader(json)
 	http.Post(*url, "application/json", reader)
 }
