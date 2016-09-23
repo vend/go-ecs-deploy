@@ -77,9 +77,11 @@ func init() {
 }
 
 func main() {
+	flag.Parse()
+
 	if *clusterName == "" || *appName == "" || *environment == "" || *region == "" {
 		flag.Usage()
-		fail(fmt.Sprintf("Failed deployment %s : missing parameters\n", *appName))
+		fail(fmt.Sprintf("Failed deployment of app %s : missing parameters\n", *appName))
 	}
 
 	if (*repoName == "" || *sha == "") && *targetImage == "" {
