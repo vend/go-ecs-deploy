@@ -28,14 +28,14 @@ func (flags *arrayFlag) Set(value string) error {
 
 var (
 	clusterName = flag.String("c", "", "Cluster name to deploy to")
-	repoName = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
-	appName = flag.String("a", "", "Application name")
+	repoName    = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
+	appName     = flag.String("a", "", "Application name")
 	environment = flag.String("e", "", "Application environment, e.g. production")
-	sha = flag.String("s", "", "Tag, usually short git SHA to deploy")
-	region = flag.String("r", "", "AWS region")
-	webhook = flag.String("w", "", "Webhook (slack) URL to post to")
+	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
+	region      = flag.String("r", "", "AWS region")
+	webhook     = flag.String("w", "", "Webhook (slack) URL to post to")
 	targetImage = flag.String("t", "", "Target image (overrides -s and -i)")
-	debug = flag.Bool("d", false, "enable Debug output")
+	debug       = flag.Bool("d", false, "enable Debug output")
 )
 
 var channels arrayFlag
@@ -47,23 +47,23 @@ func fail(s string) {
 }
 
 type SlackMessage struct {
-	Text     string `json:"text"`
-	Username string `json:"username"`
+	Text     string  `json:"text"`
+	Username string  `json:"username"`
 	Channel  *string `json:"channel,omitempty"`
 }
 
 func sendWebhook(message string, url *string, channel *string) {
 	json, _ := json.Marshal(SlackMessage{
-		Text: message,
+		Text:     message,
 		Username: "GO ECS Deploy",
-		Channel: channel,
+		Channel:  channel,
 	})
 	reader := bytes.NewReader(json)
 	http.Post(*url, "application/json", reader)
 }
 
 func sendWebhooks(message string) {
-	if (len(channels) > 0) {
+	if len(channels) > 0 {
 		for _, channel := range channels {
 			sendWebhook(message, webhook, &channel)
 		}
@@ -90,8 +90,14 @@ func main() {
 	}
 
 	serviceName := *appName + "-" + *environment
+	cfg := &aws.Config{
+		Region: aws.String(*region),
+	}
+	if *debug {
+		cfg = cfg.WithLogLevel(aws.LogDebug)
+	}
 
-	svc := ecs.New(session.New(), &aws.Config{Region: aws.String(*region)})
+	svc := ecs.New(session.New(), cfg)
 
 	if *targetImage == "" {
 		fmt.Printf("Request to deploy sha: %s to %s at %s \n", *sha, *environment, *region)
