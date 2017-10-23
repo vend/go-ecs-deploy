@@ -78,7 +78,7 @@ func sendWebhooks(message string) {
 
 func init() {
 	flag.Var(&channels, "C", "Slack channels to post to (can be specified multiple times)")
-	flag.Var(&apps, "a", "Application names, comma separated to deploy multiple at once.")
+	flag.Var(&apps, "a", "Application names (can be specified multiple times)")
 
 }
 
