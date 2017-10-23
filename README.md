@@ -25,7 +25,7 @@ Usage of ./go-ecs-deploy:
   -C value
         Slack channels to post to (can be specified multiple times)
   -a string
-        Application name
+        Application name (can be specified multiple times)
   -c string
         Cluster name to deploy to
   -d    enable Debug output

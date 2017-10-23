@@ -26,10 +26,13 @@ func (flags *arrayFlag) Set(value string) error {
 	return nil
 }
 
+func (flags *arrayFlag) Specified() bool {
+	return len(*flags) > 0
+}
+
 var (
 	clusterName = flag.String("c", "", "Cluster name to deploy to")
 	repoName    = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
-	appName     = flag.String("a", "", "Application name")
 	environment = flag.String("e", "", "Application environment, e.g. production")
 	sha         = flag.String("s", "", "Tag, usually short git SHA to deploy")
 	region      = flag.String("r", "", "AWS region")
@@ -39,6 +42,7 @@ var (
 )
 
 var channels arrayFlag
+var apps arrayFlag
 
 func fail(s string) {
 	fmt.Printf(s)
@@ -74,22 +78,25 @@ func sendWebhooks(message string) {
 
 func init() {
 	flag.Var(&channels, "C", "Slack channels to post to (can be specified multiple times)")
+	flag.Var(&apps, "a", "Application names (can be specified multiple times)")
+
 }
 
 func main() {
 	flag.Parse()
 
-	if *clusterName == "" || *appName == "" || *environment == "" || *region == "" {
+	if *clusterName == "" || !apps.Specified() || *environment == "" || *region == "" {
 		flag.Usage()
-		fail(fmt.Sprintf("Failed deployment of app %s : missing parameters\n", *appName))
+		fail(fmt.Sprintf("Failed deployment of apps %s : missing parameters\n", apps))
 	}
 
 	if (*repoName == "" || *sha == "") && *targetImage == "" {
 		flag.Usage()
-		fail(fmt.Sprintf("Failed deployment %s : no repo name, sha or target image specified\n", *appName))
+		fail(fmt.Sprintf("Failed deployment %s : no repo name, sha or target image specified\n", apps))
 	}
 
-	serviceName := *appName + "-" + *environment
+	// Take the first app specified and use it for creating the task definitions for all services.
+	exemplarServiceName := apps[0] + "-" + *environment
 	cfg := &aws.Config{
 		Region: aws.String(*region),
 	}
@@ -104,26 +111,26 @@ func main() {
 	} else {
 		fmt.Printf("Request to deploy target image: %s to %s at %s \n", *targetImage, *environment, *region)
 	}
-	fmt.Printf("Describing services for cluster %s and service %s \n", *clusterName, serviceName)
+	fmt.Printf("Describing services for cluster %s and service %s \n", *clusterName, exemplarServiceName)
 
 	serviceDesc, err :=
 		svc.DescribeServices(
 			&ecs.DescribeServicesInput{
 				Cluster:  clusterName,
-				Services: []*string{&serviceName},
+				Services: []*string{&exemplarServiceName},
 			})
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s \n`%s`", *appName, err.Error()))
+		fail(fmt.Sprintf("Failed to describe %s \n`%s`", exemplarServiceName, err.Error()))
 	}
 
 	if len(serviceDesc.Services) < 1 {
-		msg := fmt.Sprintf("No service %s found on cluster %s", serviceName, *clusterName)
+		msg := fmt.Sprintf("No service %s found on cluster %s", exemplarServiceName, *clusterName)
 		fail("Failed: " + msg)
 	}
 
 	service := serviceDesc.Services[0]
-	if serviceName != *service.ServiceName {
-		msg := fmt.Sprintf("Found the wrong service when looking for %s found %s \n", serviceName, *service.ServiceName)
+	if exemplarServiceName != *service.ServiceName {
+		msg := fmt.Sprintf("Found the wrong service when looking for %s found %s \n", exemplarServiceName, *service.ServiceName)
 		fail("Failed: " + msg)
 	}
 
@@ -134,7 +141,7 @@ func main() {
 			&ecs.DescribeTaskDefinitionInput{
 				TaskDefinition: service.TaskDefinition})
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s \n`%s`", *appName, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s \n`%s`", exemplarServiceName, err.Error()))
 	}
 
 	if *debug {
@@ -166,41 +173,45 @@ func main() {
 	registerRes, err :=
 		svc.RegisterTaskDefinition(futureDef)
 	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerDef.Image, *appName, *clusterName, err.Error()))
+		fail(fmt.Sprintf("Failed: deployment %s for %s to %s \n`%s`", *containerDef.Image, exemplarServiceName, *clusterName, err.Error()))
 	}
 
 	newArn := registerRes.TaskDefinition.TaskDefinitionArn
 
 	fmt.Printf("Registered new task for %s:%s \n", *sha, *newArn)
 
-	// update service to use new definition
-	_, err = svc.UpdateService(
-		&ecs.UpdateServiceInput{
-			Cluster:        clusterName,
-			Service:        &serviceName,
-			DesiredCount:   service.DesiredCount,
-			TaskDefinition: newArn,
-		})
-	if err != nil {
-		fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, *appName, *clusterName, *newArn, err.Error()))
-	}
+	// update services to use new definition
+	for _, appName := range apps {
+		serviceName := appName + "-" + *environment
 
-	slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, *appName, *clusterName, *newArn)
+		_, err = svc.UpdateService(
+			&ecs.UpdateServiceInput{
+				Cluster:        clusterName,
+				Service:        &serviceName,
+				DesiredCount:   service.DesiredCount,
+				TaskDefinition: newArn,
+			})
+		if err != nil {
+			fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, appName, *clusterName, *newArn, err.Error()))
+		}
 
-	// extract old image sha, and use it to generate a git compare URL
-	if *oldImage != "" && *sha != "" {
-		parts := strings.Split(*oldImage, ":")
-		if len(parts) == 2 {
-			// possibly a tagged image "def15c31-php5.5"
-			parts = strings.Split(parts[1], "-")
-			if gitURL, err := gitURL(parts[0], *sha); err == nil {
-				slackMsg += " (<" + gitURL + "|diff>)"
+		slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, appName, *clusterName, *newArn)
+
+		// extract old image sha, and use it to generate a git compare URL
+		if *oldImage != "" && *sha != "" {
+			parts := strings.Split(*oldImage, ":")
+			if len(parts) == 2 {
+				// possibly a tagged image "def15c31-php5.5"
+				parts = strings.Split(parts[1], "-")
+				if gitURL, err := gitURL(parts[0], *sha); err == nil {
+					slackMsg += " (<" + gitURL + "|diff>)"
+				}
 			}
 		}
-	}
-	sendWebhooks(slackMsg)
+		sendWebhooks(slackMsg)
 
-	fmt.Printf("Updated %s service to use new ARN: %s \n", serviceName, *newArn)
+		fmt.Printf("Updated %s service to use new ARN: %s \n", serviceName, *newArn)
+	}
 
 }
 
