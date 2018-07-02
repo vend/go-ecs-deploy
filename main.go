@@ -171,11 +171,15 @@ func main() {
 	}
 
 	futureDef := &ecs.RegisterTaskDefinitionInput{
-		ContainerDefinitions: taskDesc.TaskDefinition.ContainerDefinitions,
-		Family:               taskDesc.TaskDefinition.Family,
-		Volumes:              taskDesc.TaskDefinition.Volumes,
-		NetworkMode:          taskDesc.TaskDefinition.NetworkMode,
-		TaskRoleArn:          taskDesc.TaskDefinition.TaskRoleArn,
+		ContainerDefinitions:    taskDesc.TaskDefinition.ContainerDefinitions,
+		Family:                  taskDesc.TaskDefinition.Family,
+		Volumes:                 taskDesc.TaskDefinition.Volumes,
+		NetworkMode:             taskDesc.TaskDefinition.NetworkMode,
+		TaskRoleArn:             taskDesc.TaskDefinition.TaskRoleArn,
+		Cpu:                     taskDesc.TaskDefinition.Cpu,
+		Memory:                  taskDesc.TaskDefinition.Memory,
+		RequiresCompatibilities: taskDesc.TaskDefinition.RequiresCompatibilities,
+		ExecutionRoleArn:        taskDesc.TaskDefinition.ExecutionRoleArn,
 	}
 
 	if *debug {
