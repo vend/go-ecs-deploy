@@ -160,14 +160,40 @@ func main() {
 		fmt.Printf("Current task description: \n%+v \n", taskDesc)
 	}
 
-	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
-	oldImage := containerDef.Image
-	{
-		x := *targetImage
-		if *targetImage == "" {
-			x = fmt.Sprintf("%s:%s", *repoName, *sha)
+	var containerDef *ecs.ContainerDefinition
+	var oldImage *string
+	// don't change existing behaviour
+	if len(taskDesc.TaskDefinition.ContainerDefinitions) == 0 {
+		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
+		oldImage = containerDef.Image
+		{
+			x := *targetImage
+			if *targetImage == "" {
+				x = fmt.Sprintf("%s:%s", *repoName, *sha)
+			}
+			containerDef.Image = &x
 		}
-		containerDef.Image = &x
+	} else {
+		fmt.Printf("Task definition has multiple containers \n")
+		for i, containerDef := range taskDesc.TaskDefinition.ContainerDefinitions {
+			oldImage = containerDef.Image
+			{
+				x := *targetImage
+				if *targetImage == "" {
+					// Split repoName and Tag
+					imageString := *oldImage
+					pair := strings.Split(imageString, ":")
+					if len(pair) == 2 {
+						fmt.Printf("Updating sha on repo: %s \n", pair[0])
+						x = fmt.Sprintf("%s:%s", pair[0], *sha)
+					} else {
+						x = fmt.Sprintf("%s:%s", *repoName, *sha)
+					}
+				}
+				containerDef.Image = &x
+				taskDesc.TaskDefinition.ContainerDefinitions[i] = containerDef
+			}
+		}
 	}
 
 	futureDef := &ecs.RegisterTaskDefinitionInput{
