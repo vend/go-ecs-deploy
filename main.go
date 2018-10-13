@@ -162,6 +162,7 @@ func main() {
 
 	var containerDef *ecs.ContainerDefinition
 	var oldImage *string
+	var i int
 	// don't change existing behaviour
 	if len(taskDesc.TaskDefinition.ContainerDefinitions) == 0 {
 		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
@@ -175,7 +176,7 @@ func main() {
 		}
 	} else {
 		fmt.Printf("Task definition has multiple containers \n")
-		for i, containerDef := range taskDesc.TaskDefinition.ContainerDefinitions {
+		for i, containerDef = range taskDesc.TaskDefinition.ContainerDefinitions {
 			oldImage = containerDef.Image
 			{
 				x := *targetImage
@@ -222,6 +223,9 @@ func main() {
 
 	fmt.Printf("Registered new task for %s:%s \n", *sha, *newArn)
 
+	// Get first container definition to create slack message
+	containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
+
 	// update services to use new definition
 	for _, appName := range apps {
 		serviceName := appName + "-" + *environment
@@ -237,6 +241,7 @@ func main() {
 			fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, appName, *clusterName, *newArn, err.Error()))
 		}
 
+		fmt.Printf("*containerDef: %s", *containerDef)
 		slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, appName, *clusterName, *newArn)
 
 		// extract old image sha, and use it to generate a git compare URL
