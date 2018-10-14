@@ -31,15 +31,16 @@ func (flags *arrayFlag) Specified() bool {
 }
 
 var (
-	clusterName  = flag.String("c", "", "Cluster name to deploy to")
-	repoName     = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
-	environment  = flag.String("e", "", "Application environment, e.g. production")
-	sha          = flag.String("s", "", "Tag, usually short git SHA to deploy")
-	region       = flag.String("r", "", "AWS region")
-	webhook      = flag.String("w", "", "Webhook (slack) URL to post to")
-	targetImage  = flag.String("t", "", "Target image (overrides -s and -i)")
-	preflightURL = flag.String("p", "", "Preflight URL, if this url returns anything but 200 deploy is aborted")
-	debug        = flag.Bool("d", false, "enable Debug output")
+	clusterName    = flag.String("c", "", "Cluster name to deploy to")
+	repoName       = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
+	environment    = flag.String("e", "", "Application environment, e.g. production")
+	sha            = flag.String("s", "", "Tag, usually short git SHA to deploy")
+	region         = flag.String("r", "", "AWS region")
+	webhook        = flag.String("w", "", "Webhook (slack) URL to post to")
+	targetImage    = flag.String("t", "", "Target image (overrides -s and -i)")
+	preflightURL   = flag.String("p", "", "Preflight URL, if this url returns anything but 200 deploy is aborted")
+	debug          = flag.Bool("d", false, "enable Debug output")
+	multiContainer = flag.Bool("m", false, "Multicontainer service")
 )
 
 var channels arrayFlag
@@ -163,8 +164,8 @@ func main() {
 	var containerDef *ecs.ContainerDefinition
 	var oldImage *string
 	var i int
-	// don't change existing behaviour
-	if len(taskDesc.TaskDefinition.ContainerDefinitions) == 0 {
+	// multiContainer service
+	if *multiContainer {
 		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
 		oldImage = containerDef.Image
 		{
