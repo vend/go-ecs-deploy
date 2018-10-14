@@ -41,6 +41,7 @@ Usage of ./go-ecs-deploy:
         Target image (overrides -s and -i)
   -w string
         Webhook (slack) URL to post to
+  -m enable multi container deploy
 ```
 
 ### Example
@@ -61,3 +62,5 @@ To update dependencies, open up `glide.yaml` and update the `version:` field for
 the relevant package(s).
 
 Then run `glide up`
+
+To build `go-ecs-deploy` locally simply run `make build`.

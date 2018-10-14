@@ -31,15 +31,16 @@ func (flags *arrayFlag) Specified() bool {
 }
 
 var (
-	clusterName  = flag.String("c", "", "Cluster name to deploy to")
-	repoName     = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
-	environment  = flag.String("e", "", "Application environment, e.g. production")
-	sha          = flag.String("s", "", "Tag, usually short git SHA to deploy")
-	region       = flag.String("r", "", "AWS region")
-	webhook      = flag.String("w", "", "Webhook (slack) URL to post to")
-	targetImage  = flag.String("t", "", "Target image (overrides -s and -i)")
-	preflightURL = flag.String("p", "", "Preflight URL, if this url returns anything but 200 deploy is aborted")
-	debug        = flag.Bool("d", false, "enable Debug output")
+	clusterName    = flag.String("c", "", "Cluster name to deploy to")
+	repoName       = flag.String("i", "", "Container repo to pull from e.g. quay.io/username/reponame")
+	environment    = flag.String("e", "", "Application environment, e.g. production")
+	sha            = flag.String("s", "", "Tag, usually short git SHA to deploy")
+	region         = flag.String("r", "", "AWS region")
+	webhook        = flag.String("w", "", "Webhook (slack) URL to post to")
+	targetImage    = flag.String("t", "", "Target image (overrides -s and -i)")
+	preflightURL   = flag.String("p", "", "Preflight URL, if this url returns anything but 200 deploy is aborted")
+	debug          = flag.Bool("d", false, "enable Debug output")
+	multiContainer = flag.Bool("m", false, "Multicontainer service")
 )
 
 var channels arrayFlag
@@ -160,9 +161,32 @@ func main() {
 		fmt.Printf("Current task description: \n%+v \n", taskDesc)
 	}
 
-	containerDef := taskDesc.TaskDefinition.ContainerDefinitions[0]
-	oldImage := containerDef.Image
-	{
+	var containerDef *ecs.ContainerDefinition
+	var oldImage *string
+	// multiContainer service
+	if *multiContainer {
+		fmt.Printf("Task definition has multiple containers \n")
+		var i int
+		for i, containerDef = range taskDesc.TaskDefinition.ContainerDefinitions {
+			oldImage = containerDef.Image
+			x := *targetImage
+			if *targetImage == "" {
+				// Split repoName and Tag
+				imageString := *oldImage
+				pair := strings.Split(imageString, ":")
+				if len(pair) == 2 {
+					fmt.Printf("Updating sha on repo: %s \n", pair[0])
+					x = fmt.Sprintf("%s:%s", pair[0], *sha)
+				} else {
+					x = fmt.Sprintf("%s:%s", *repoName, *sha)
+				}
+			}
+			containerDef.Image = &x
+			taskDesc.TaskDefinition.ContainerDefinitions[i] = containerDef
+		}
+	} else {
+		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
+		oldImage = containerDef.Image
 		x := *targetImage
 		if *targetImage == "" {
 			x = fmt.Sprintf("%s:%s", *repoName, *sha)
@@ -195,6 +219,9 @@ func main() {
 	newArn := registerRes.TaskDefinition.TaskDefinitionArn
 
 	fmt.Printf("Registered new task for %s:%s \n", *sha, *newArn)
+
+	// Get first container definition to create slack message
+	containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
 
 	// update services to use new definition
 	for _, appName := range apps {
