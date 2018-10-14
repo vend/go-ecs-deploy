@@ -62,3 +62,5 @@ To update dependencies, open up `glide.yaml` and update the `version:` field for
 the relevant package(s).
 
 Then run `glide up`
+
+To build `go-ecs-deploy` locally simply run `make build`.
