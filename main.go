@@ -166,16 +166,6 @@ func main() {
 	var i int
 	// multiContainer service
 	if *multiContainer {
-		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
-		oldImage = containerDef.Image
-		{
-			x := *targetImage
-			if *targetImage == "" {
-				x = fmt.Sprintf("%s:%s", *repoName, *sha)
-			}
-			containerDef.Image = &x
-		}
-	} else {
 		fmt.Printf("Task definition has multiple containers \n")
 		for i, containerDef = range taskDesc.TaskDefinition.ContainerDefinitions {
 			oldImage = containerDef.Image
@@ -195,6 +185,16 @@ func main() {
 				containerDef.Image = &x
 				taskDesc.TaskDefinition.ContainerDefinitions[i] = containerDef
 			}
+		}
+	} else {
+		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
+		oldImage = containerDef.Image
+		{
+			x := *targetImage
+			if *targetImage == "" {
+				x = fmt.Sprintf("%s:%s", *repoName, *sha)
+			}
+			containerDef.Image = &x
 		}
 	}
 
