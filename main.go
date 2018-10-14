@@ -242,7 +242,6 @@ func main() {
 			fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, appName, *clusterName, *newArn, err.Error()))
 		}
 
-		fmt.Printf("*containerDef: %s", *containerDef)
 		slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, appName, *clusterName, *newArn)
 
 		// extract old image sha, and use it to generate a git compare URL
