@@ -41,6 +41,7 @@ Usage of ./go-ecs-deploy:
         Target image (overrides -s and -i)
   -w string
         Webhook (slack) URL to post to
+  -m enable multi container deploy
 ```
 
 ### Example
