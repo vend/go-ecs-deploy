@@ -114,7 +114,6 @@ func main() {
 		Region: aws.String(*region),
 	}
 	if *debug {
-		fmt.Printf("multi container? %s", *multiContainer)
 		cfg = cfg.WithLogLevel(aws.LogDebug)
 	}
 
