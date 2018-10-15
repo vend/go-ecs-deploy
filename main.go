@@ -174,10 +174,14 @@ func main() {
 				// Split repoName and Tag
 				imageString := *oldImage
 				pair := strings.Split(imageString, ":")
+				if (*debug) {
+					fmt.Printf("imageString: %s\n", imageString)
+				}
 				if len(pair) == 2 {
 					fmt.Printf("Updating sha on repo: %s \n", pair[0])
 					x = fmt.Sprintf("%s:%s", pair[0], *sha)
 				} else {
+					fmt.Printf("Using repo name passed in as argument: %s \n", *repoName)
 					x = fmt.Sprintf("%s:%s", *repoName, *sha)
 				}
 			}
