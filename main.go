@@ -114,6 +114,7 @@ func main() {
 		Region: aws.String(*region),
 	}
 	if *debug {
+		fmt.Printf("multi container? %s", *multiContainer)
 		cfg = cfg.WithLogLevel(aws.LogDebug)
 	}
 
@@ -189,6 +190,7 @@ func main() {
 			taskDesc.TaskDefinition.ContainerDefinitions[i] = containerDef
 		}
 	} else {
+		fmt.Printf("Not considering multi container task definition \n")
 		containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
 		oldImage = containerDef.Image
 		x := *targetImage
