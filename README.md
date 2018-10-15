@@ -64,3 +64,4 @@ the relevant package(s).
 Then run `glide up`
 
 To build `go-ecs-deploy` locally simply run `make build`.
+
