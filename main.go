@@ -267,12 +267,6 @@ func gitURL(startSHA string, endSHA string) (string, error) {
 		project = travisSlug
 	}
 
-	if werckerOwner, ok := os.LookupEnv("WERCKER_GIT_OWNER"); ok {
-		if werckerRepo, ok := os.LookupEnv("WERCKER_GIT_REPOSITORY"); ok {
-			project = werckerOwner + "/" + werckerRepo
-		}
-	}
-
 	if project == "" {
 		return "", errors.New("nope")
 	}
