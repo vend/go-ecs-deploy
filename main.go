@@ -227,7 +227,7 @@ func main() {
 
 	var appDisplayVersion string
 	if *appVersion != "" {
-		appDisplayVersion = fmt.Sprintf("(version %s)", *appVersion)
+		appDisplayVersion = fmt.Sprintf(" (version %s) ", *appVersion)
 	}
 
 	// update services to use new definition
@@ -242,10 +242,10 @@ func main() {
 				TaskDefinition: newArn,
 			})
 		if err != nil {
-			fail(fmt.Sprintf("Failed: deployment %s for %s %s to %s as %s \n`%s`", *containerDef.Image, appName, appDisplayVersion, *clusterName, *newArn, err.Error()))
+			fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, appName, *clusterName, *newArn, err.Error()))
 		}
 
-		slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, appName, *clusterName, *newArn)
+		slackMsg := fmt.Sprintf("Deployed %s for *%s%s* to *%s* as `%s`", *containerDef.Image, appName, appDisplayVersion, *clusterName, *newArn)
 
 		// extract old image sha, and use it to generate a git compare URL
 		if *oldImage != "" && *sha != "" {
