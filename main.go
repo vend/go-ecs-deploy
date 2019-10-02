@@ -225,7 +225,7 @@ func main() {
 	// Get first container definition to create slack message
 	containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
 
-	var appDisplayVersion *string
+	var appDisplayVersion string
 	if *appVersion != "" {
 		appDisplayVersion = fmt.Sprintf("(%s)", *appVersion)
 	}
