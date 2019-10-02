@@ -41,6 +41,7 @@ var (
 	preflightURL   = flag.String("p", "", "Preflight URL, if this url returns anything but 200 deploy is aborted")
 	debug          = flag.Bool("d", false, "enable Debug output")
 	multiContainer = flag.Bool("m", false, "Multicontainer service")
+	appVersion     = flag.String("v", "", "Application version, e.g. '1234' or '12.3.4'")
 )
 
 var channels arrayFlag
@@ -224,6 +225,11 @@ func main() {
 	// Get first container definition to create slack message
 	containerDef = taskDesc.TaskDefinition.ContainerDefinitions[0]
 
+	var appDisplayVersion *string
+	if *appVersion != "" {
+		appDisplayVersion = "(" + *appVersion + ")"
+	}
+
 	// update services to use new definition
 	for _, appName := range apps {
 		serviceName := appName + "-" + *environment
@@ -236,7 +242,7 @@ func main() {
 				TaskDefinition: newArn,
 			})
 		if err != nil {
-			fail(fmt.Sprintf("Failed: deployment %s for %s to %s as %s \n`%s`", *containerDef.Image, appName, *clusterName, *newArn, err.Error()))
+			fail(fmt.Sprintf("Failed: deployment %s for %s %s to %s as %s \n`%s`", *containerDef.Image, appName, appDisplayVersion, *clusterName, *newArn, err.Error()))
 		}
 
 		slackMsg := fmt.Sprintf("Deployed %s for *%s* to *%s* as `%s`", *containerDef.Image, appName, *clusterName, *newArn)
