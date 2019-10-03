@@ -227,7 +227,7 @@ func main() {
 
 	var appDisplayVersion string
 	if *appVersion != "" {
-		appDisplayVersion = fmt.Sprintf(" (version %s) ", *appVersion)
+		appDisplayVersion = fmt.Sprintf(" (version %s)", *appVersion)
 	}
 
 	// update services to use new definition
