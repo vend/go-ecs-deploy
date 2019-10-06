@@ -56,6 +56,22 @@ AWS_PROFILE=production go-ecs-deploy \
   -r us-west-2
 ```
 
+Multi container task definition with side car container pushed by the same repo
+
+```sh
+
+av privileged ./go-ecs-deploy \
+    -e production \
+    -a "corp-blog" \
+    -i "542640492856.dkr.ecr.us-west-2.amazonaws.com/corp-blog-nginx" \
+    -c corporate-production \
+    -r us-west-2 \
+    -s c2b10cc \
+    -d=true \
+    -m=true
+
+```
+
 ## Development
 
 To update dependencies, open up `glide.yaml` and update the `version:` field for
