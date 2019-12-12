@@ -1,11 +1,10 @@
 language: go
-go: '1.10'
-before_install:
-- go get -v github.com/Masterminds/glide
+go: 1.13.x
+os: linux
 install: true
 script:
-- go test $(glide nv)
-- CGO_ENABLED=0 GOOS="linux" go build
+- go test ./...
+- CGO_ENABLED=0 GOOS="linux" go build -mod=vendor
 deploy:
   provider: releases
   skip_cleanup: true
