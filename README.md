@@ -1,7 +1,9 @@
 # go-ecs-deploy [![Build Status](https://travis-ci.org/vend/go-ecs-deploy.svg)](https://travis-ci.org/vend/go-ecs-deploy)
-deploy a hosted docker container to an existing ecs cluster
+~~deploy a hosted docker container to an existing ecs cluster~~
 
-Allows deployment of ECS microservices straight from the command line!
+~~Allows deployment of ECS microservices straight from the command line!~~
+
+Note that **go-ecs-deploy** has been deprecated in favor of using [catapult](https://github.com/vend/catapult), as is done in the standard Travis CI/CD [deploy script](https://github.com/vend/ci-scripts/blob/master/travis/deploy.sh#L53).
 
 ## Installation
 
